@@ -49,15 +49,15 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            background-color: var(--bg-light);
+            background: linear-gradient(180deg, var(--bg-light), #ffffff);
             color: var(--text-color);
-            transition: background-color 0.5s, color 0.5s; /* Smooth transition for dark mode */
+            transition: background 0.5s, color 0.5s; /* Smooth transition for dark mode */
         }
 
         .dark-mode {
-            background-color: var(--bg-dark);
+            background: linear-gradient(180deg, var(--bg-dark), #000000);
             color: var(--text-dark-color);
-            transition: background-color 0.5s, color 0.5s
+            transition: background 0.5s, color 0.5s
         }
 
         /* Title Styling */
@@ -189,6 +189,18 @@
             margin-bottom: 20px; /* Increase this value to create more space */
         }
 
+        .direction-image {
+            width: 80px;
+            height: 80px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .score {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
         /* Flex Layouts */
         .roundabouts {
             margin-top: 20px;
@@ -316,6 +328,7 @@
     
 
     <div class="title">Driving Direction Game</div>
+    <div id="score" class="score">Directions: 0</div>
 
     <!-- Side Buttons for Start Again and Settings -->
     <button id="startAgainButton" class="button start-again-button" aria-label="Start Again">Start Again</button>
@@ -324,6 +337,7 @@
     </div>
 
     <div class="current-direction" id="currentDirection" aria-live="polite">Start Your Engine!</div>
+    <img id="directionImage" class="direction-image" alt="Direction arrow" />
 
 
     <div class="button-container">
@@ -397,10 +411,13 @@
         let gpsVoiceEnabled = true;
         let beepEnabled = false;
         let darkModeEnabled = false;
+        let score = 0;
 
         const currentDirectionElement = document.getElementById('currentDirection');
         const logElement = document.getElementById('log');
         const splashScreen = document.getElementById('splashScreen');
+        const scoreElement = document.getElementById('score');
+        const directionImage = document.getElementById('directionImage');
 
         /* Splash Screen Click */
         splashScreen.addEventListener('click', function () {
@@ -411,17 +428,30 @@
 
 
         /* Show a direction with sound and GPS voice */
-        let lastDirection = ""; // To store the last shown direction
+let lastDirection = ""; // To store the last shown direction
 let lastDirectionCount = 0; // Count of consecutive same directions
 let lastLeftOrRight = ""; // To store the last left/right direction
 let lastLeftOrRightCount = 0; // Count of consecutive left/right same directions
 
-// Sample directions for the 'Get Direction' button
+function updateScore() {
+    scoreElement.textContent = `Directions: ${score}`;
+}
 
-// Add event listener for "Get Direction" button
-document.getElementById('directionButton').addEventListener('click', () => {
-    const direction = directions[Math.floor(Math.random() * directions.length)];
-});
+function updateDirectionIcon(direction) {
+    const icons = {
+        'Left': 'images/left-arrow.png',
+        'Right': 'images/right-arrow.png',
+        'Straight': 'images/straight-arrow.png'
+    };
+    if (icons[direction]) {
+        directionImage.src = icons[direction];
+        directionImage.style.display = 'block';
+    } else {
+        directionImage.style.display = 'none';
+    }
+}
+
+updateScore();
 
 // Add event listener for "Left or Right" button
 document.getElementById('leftOrRightBtn').addEventListener('click', () => {
@@ -487,6 +517,9 @@ if (straightCount >= 1) { // Adjust the threshold as needed
 }
     currentDirectionElement.textContent = directionText;
     addDirectionToLog(directionText);
+    score++;
+    updateScore();
+    updateDirectionIcon(direction);
 
       // Await for the UI update before playing audio
     await new Promise(resolve => requestAnimationFrame(resolve));
@@ -529,6 +562,9 @@ async function showLeftOrRightDirection() {
 
     currentDirectionElement.textContent = directionText;
     addDirectionToLog(directionText);
+    score++;
+    updateScore();
+    updateDirectionIcon(leftOrRight);
       // Await for the UI update before playing audio
   await new Promise(resolve => requestAnimationFrame(resolve));
     
@@ -654,6 +690,9 @@ function addDirectionToLog(direction) {
             const exitDirection = `Take the ${exitNumber}${getOrdinal(exitNumber)} exit`;
             currentDirectionElement.textContent = exitDirection;
             addDirectionToLog(exitDirection);
+            score++;
+            updateScore();
+            updateDirectionIcon(null);
             playRoundaboutGPS(exitNumber);
             playBeepSound(); // Play beep sound if enabled
         }
@@ -715,6 +754,9 @@ function addDirectionToLog(direction) {
         log = [];
         logElement.innerHTML = '';
         currentDirectionElement.textContent = 'Start Your Engine!';
+        score = 0;
+        updateScore();
+        updateDirectionIcon(null);
         if (soundsEnabled) playSound('startSound');
     }
 });
