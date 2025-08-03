@@ -36,8 +36,8 @@
             --button-hover-color: #45a049; /* Button hover color */
             --text-color: #333; /* Light mode text color */
             --text-dark-color: #f2f2f2; /* Dark mode text color */
-            --bg-light: #f2f2f2; /* Light mode background color */
-            --bg-dark: #333; /* Dark mode background color */
+            --bg-light: linear-gradient(135deg, #f2f2f2, #d0e6f7); /* Light mode background gradient */
+            --bg-dark: linear-gradient(135deg, #333, #111); /* Dark mode background gradient */
         }
 
         /* Basic Styling */
@@ -49,15 +49,15 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            background-color: var(--bg-light);
+            background: var(--bg-light);
             color: var(--text-color);
-            transition: background-color 0.5s, color 0.5s; /* Smooth transition for dark mode */
+            transition: background 0.5s, color 0.5s; /* Smooth transition for dark mode */
         }
 
         .dark-mode {
-            background-color: var(--bg-dark);
+            background: var(--bg-dark);
             color: var(--text-dark-color);
-            transition: background-color 0.5s, color 0.5s
+            transition: background 0.5s, color 0.5s
         }
 
         /* Title Styling */
@@ -134,13 +134,15 @@
             cursor: pointer;
             min-width: 120px;
             height: 50px;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
 
         /* Remove hover effect */
         .button:hover {
             transform: scale(1.05);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.25);
         }
 
         /* Start Again and Settings Button positioning */
@@ -187,6 +189,11 @@
             font-size: 28px;
             font-weight: bold;
             margin-bottom: 20px; /* Increase this value to create more space */
+        }
+
+        .stats {
+            margin-top: 10px;
+            font-size: 18px;
         }
 
         /* Flex Layouts */
@@ -316,6 +323,7 @@
     
 
     <div class="title">Driving Direction Game</div>
+    <div id="stats" class="stats" aria-live="polite">Left: 0 | Right: 0 | Straight: 0 | Roundabouts: 0</div>
 
     <!-- Side Buttons for Start Again and Settings -->
     <button id="startAgainButton" class="button start-again-button" aria-label="Start Again">Start Again</button>
@@ -400,7 +408,23 @@
 
         const currentDirectionElement = document.getElementById('currentDirection');
         const logElement = document.getElementById('log');
+        const statsElement = document.getElementById('stats');
         const splashScreen = document.getElementById('splashScreen');
+
+        let stats = { Left: 0, Right: 0, Straight: 0, Roundabout: 0 };
+
+        function updateStatsDisplay() {
+            statsElement.textContent = `Left: ${stats.Left} | Right: ${stats.Right} | Straight: ${stats.Straight} | Roundabouts: ${stats.Roundabout}`;
+        }
+
+        function incrementStats(key) {
+            if (stats[key] !== undefined) {
+                stats[key]++;
+                updateStatsDisplay();
+            }
+        }
+
+        updateStatsDisplay();
 
         /* Splash Screen Click */
         splashScreen.addEventListener('click', function () {
@@ -487,6 +511,7 @@ if (straightCount >= 1) { // Adjust the threshold as needed
 }
     currentDirectionElement.textContent = directionText;
     addDirectionToLog(directionText);
+    incrementStats(direction);
 
       // Await for the UI update before playing audio
     await new Promise(resolve => requestAnimationFrame(resolve));
@@ -529,6 +554,7 @@ async function showLeftOrRightDirection() {
 
     currentDirectionElement.textContent = directionText;
     addDirectionToLog(directionText);
+    incrementStats(leftOrRight);
       // Await for the UI update before playing audio
   await new Promise(resolve => requestAnimationFrame(resolve));
     
@@ -654,6 +680,7 @@ function addDirectionToLog(direction) {
             const exitDirection = `Take the ${exitNumber}${getOrdinal(exitNumber)} exit`;
             currentDirectionElement.textContent = exitDirection;
             addDirectionToLog(exitDirection);
+            incrementStats('Roundabout');
             playRoundaboutGPS(exitNumber);
             playBeepSound(); // Play beep sound if enabled
         }
@@ -715,6 +742,8 @@ function addDirectionToLog(direction) {
         log = [];
         logElement.innerHTML = '';
         currentDirectionElement.textContent = 'Start Your Engine!';
+        stats = { Left: 0, Right: 0, Straight: 0, Roundabout: 0 };
+        updateStatsDisplay();
         if (soundsEnabled) playSound('startSound');
     }
 });
