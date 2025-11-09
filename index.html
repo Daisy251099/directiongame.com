@@ -1,731 +1,893 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Driving Direction Game</title>
-
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
-    
-        <!-- Favicon for the tab bar -->
-        <link rel="icon" type="image/png" href="images/favicon.png"> <!-- PNG Favicon -->
-        <!-- If using .ico -->
-        <!-- <link rel="icon" type="image/x-icon" href="images/favicon.ico"> -->
-    
-        <!-- Other head content like stylesheets, etc. -->
-        <head>
-            <meta name="apple-mobile-web-app-capable" content="yes">
-            <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-            <link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon.png">
-            <title>Direction Game</title>
-            <!-- Other meta tags -->
-        </head>
-        
-    </head>
-    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driving Direction Game</title>
+    <title>Random Direction Navigator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --title-color: #4CAF50; /* Title color */
-            --button-bg-color: #4CAF50; /* Button background color */
-            --button-hover-color: #45a049; /* Button hover color */
-            --text-color: #333; /* Light mode text color */
-            --text-dark-color: #f2f2f2; /* Dark mode text color */
-            --bg-light: #f2f2f2; /* Light mode background color */
-            --bg-dark: #333; /* Dark mode background color */
-        }
-
-        /* Basic Styling */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            background-color: var(--bg-light);
-            color: var(--text-color);
-            transition: background-color 0.5s, color 0.5s; /* Smooth transition for dark mode */
-        }
-
-        .dark-mode {
-            background-color: var(--bg-dark);
-            color: var(--text-dark-color);
-            transition: background-color 0.5s, color 0.5s
-        }
-
-        /* Title Styling */
-        .title {
-            font-size: 40px;
-            font-family: 'Permanent Marker', cursive;
-            font-weight: 400; /* Existing font weight */
-            margin: 20px 0; /* Existing margin */
-            color: var(--button-bg-color); /* Match title color with button color */
-            text-align: center; /* Center align the text */
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) { /* Adjust for mobile screens */
-    .title {
-        font-size: 34px; /* Smaller size for mobile */
-        margin: 10px 0; /* Adjust margin for better spacing */
-    }
-}
-
-        /* Splash Screen Styling */
-        .splash-screen {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.9);
-    color: white;
-    font-size: 24px;
-    line-height: 1.5;
-    padding: 0px; /* Add padding around the entire splash screen */
-    border-radius: 0px; /* Optional: rounded corners */
-    text-align: center; /* Center align the text */
-    display: flex; /* Use flexbox for centering content */
-    flex-direction: column; /* Arrange items vertically */
-    justify-content: center; /* Center items vertically */
-    align-items: center; /* Center items horizontally */
-    z-index: 1000; /* Ensure it appears above other content */
-}
-
-.welcome-message {
-    font-size: 32px; /* Set a larger font size for the welcome message */
-    margin-bottom: 20px; /* Space below the welcome message */
-}
-
-.instructions {
-    margin-bottom: 15px; /* Space below the instructions title */
-    font-weight: bold; /* Make instructions title bold */
-}
-
-.instruction-item {
-    margin-bottom: 10px; /* Space between each instruction */
-}
-
-.click-to-start {
-    margin-top: 20px; /* Space above the "Click to start" text */
-}
-
-
-
-
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         
+        /* --- THEME VARIABLE DEFINITIONS (3 Schemes) --- */
 
+        /* 1. DEFAULT (Pink / Purple) - Light Mode */
+        :root, body[data-theme="default"]:not(.dark-mode) {
+            --theme-bg-start: #A855F7; /* Purple */
+            --theme-bg-end: #14B8A6; /* Teal */
+            --theme-card-bg: white;
+            --theme-text: #1F2937;
+            --theme-accent: #EC4899; /* Pink */
+            --theme-arrow: #14B8A6; /* Teal */
+            --theme-secondary: #F3F4F6; /* Gray-100 */
+        }
+        /* 1. DEFAULT (Pink / Purple) - Dark Mode */
+        body[data-theme="default"].dark-mode {
+            --theme-bg-start: #4C1D95; /* Deep Purple */
+            --theme-bg-end: #064E3B; /* Deep Green */
+            --theme-card-bg: #1F2937; /* Gray-800 */
+            --theme-text: #E5E7EB; /* Gray-200 */
+            --theme-accent: #A855F7; /* Purple */
+            --theme-arrow: #34D399; /* Light Teal */
+            --theme-secondary: #374151; /* Gray-700 */
+        }
 
+        /* 2. TEAL / GREEN Theme - Light Mode */
+        body[data-theme="teal"]:not(.dark-mode) {
+            --theme-bg-start: #00B8D4; /* Cyan */
+            --theme-bg-end: #00C853; /* Bright Green */
+            --theme-card-bg: white;
+            --theme-text: #1F2937;
+            --theme-accent: #00B8D4; /* Cyan */
+            --theme-arrow: #00C853; 
+            --theme-secondary: #F3F4F6;
+        }
+        /* 2. TEAL / GREEN Theme - Dark Mode */
+        body[data-theme="teal"].dark-mode {
+            --theme-bg-start: #006064; /* Dark Cyan */
+            --theme-bg-end: #1B5E20; /* Darker Green */
+            --theme-card-bg: #1F2937;
+            --theme-text: #E5E7EB;
+            --theme-accent: #80DEEA; /* Light Cyan */
+            --theme-arrow: #A5D6A7; /* Pale Green */
+            --theme-secondary: #374151;
+        }
 
+        /* 3. BLUE / YELLOW Theme - Light Mode */
+        body[data-theme="blue"]:not(.dark-mode) {
+            --theme-bg-start: #2196F3; /* Bright Blue */
+            --theme-bg-end: #FFEB3B; /* Yellow */
+            --theme-card-bg: white;
+            --theme-text: #1F2937;
+            --theme-accent: #2196F3; 
+            --theme-arrow: #FFEB3B;
+            --theme-secondary: #F3F4F6;
+        }
+        /* 3. BLUE / YELLOW Theme - Dark Mode */
+        body[data-theme="blue"].dark-mode {
+            --theme-bg-start: #0D47A1; /* Deep Blue */
+            --theme-bg-end: #FFC107; /* Amber */
+            --theme-card-bg: #1F2937;
+            --theme-text: #E5E7EB;
+            --theme-accent: #90CAF9; /* Light Blue */
+            --theme-arrow: #FFECB3; /* Pale Yellow */
+            --theme-secondary: #374151;
+        }
 
-        /* Button Styles */
-        .button {
-            padding: 10px;
-            font-size: 18px;
-            background-color: var(--button-bg-color);
+        /* --- BASE STYLES APPLIED VIA VARIABLES --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px 16px; 
+            transition: background 0.5s ease, color 0.5s ease;
+            background: linear-gradient(135deg, var(--theme-bg-start) 0%, var(--theme-bg-end) 50%, var(--theme-bg-end) 100%);
+        }
+
+        .card { 
+            border-radius: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease-out;
+            background-color: var(--theme-card-bg); 
+            color: var(--theme-text); 
+        }
+
+        /* Generic Text/Header Styling */
+        body.dark-mode .card h2, body.dark-mode .card label, body.dark-mode .card span { color: var(--theme-text); }
+        
+        /* Arrow */
+        .arrow-container {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+        }
+        #direction-arrow {
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transform-origin: 50% 50%;
+            fill: var(--theme-arrow);
+        }
+        
+        /* Main Button */
+        #request-direction { 
+            background-color: var(--theme-accent);
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            min-width: 120px;
-            height: 50px;
-            transition: transform 0.2s ease;
+            box-shadow: 0 10px 15px -3px var(--theme-accent);
         }
-
-
-        /* Remove hover effect */
-        .button:hover {
-            transform: scale(1.05);
+        
+        /* Mode/Exit Buttons */
+        .mode-button { 
+            background-color: rgba(255, 255, 255, 0.3); 
+            color: white; 
+            transition: all 0.2s;
         }
-
-        /* Start Again and Settings Button positioning */
-        .side-buttons {
-            position: absolute;
-            top: 90px; /* Adjusted to lower buttons further down */
-            right: 20px;
+        .active-mode {
+            background-color: var(--theme-accent) !important;
+            color: white !important;
+        }
+        
+        /* Settings/Reset Buttons */
+        #settings-button { 
+            background-color: var(--theme-card-bg); 
+            color: var(--theme-accent);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .reset-button { 
+            background-color: var(--theme-secondary); 
+            color: var(--theme-text); 
+        }
+        
+        /* Dark Mode overrides for secondary elements */
+        body.dark-mode .mode-button { background-color: rgba(31, 41, 55, 0.7); color: #D1D5DB; }
+        body.dark-mode #settings-button { background-color: var(--theme-secondary); color: var(--theme-accent); }
+        body.dark-mode .exit-button { background-color: #4B5563; color: white; }
+        body.dark-mode .exit-button-active { background-color: var(--theme-arrow) !important; color: #1F2937 !important; }
+        
+        /* Splash Screen (Unchanged, looks great) */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-
-        .start-again-button {
-            position: absolute;
-            top: 90px; /* Adjusted to align with settings button */
-            left: 20px;
-            right: auto; /* Reset right positioning */
-        }
-
-        .settings-button {
-            width: 50px;
-            height: 50px;
-            display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-        }
-
-        /* Directions and Log */
-        .current-direction, .log {
-            margin-top: 78px; /* Increased margin for more space */
-            width: 90%;
             text-align: center;
-            font-size: 20px;
-            transition: opacity 0.5s;
-        }
-
-        .button-container {
-  display: flex; /* Use flexbox for horizontal layout */
-  gap: 30px; /* Adjust the gap between buttons as needed */
-}
-
-        .current-direction {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 20px; /* Increase this value to create more space */
-        }
-
-        /* Flex Layouts */
-        .roundabouts {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .roundabout-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* Modal Styling */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.4);
-            justify-content: center;
-            align-items: center;
-        }
-
-        :root {
-    /* Other existing variables */
-    --modal-bg-light: #fff; /* Light mode background for modal */
-    --modal-bg-dark: #2c2c2c; /* Dark mode background for modal */
-    --modal-text-light: #000; /* Light mode text color */
-    --modal-text-dark: #f2f2f2; /* Dark mode text color */
-}
-
-/* Modal Styling */
-.modal-content {
-    background-color: var(--modal-bg-light); /* Default to light mode */
-    color: var(--modal-text-light); /* Default text color */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 300px;
-    text-align: left;
-}
-
-/* Dark mode adjustments for modal */
-.dark-mode .modal-content {
-    background-color: var(--modal-bg-dark); /* Change background for dark mode */
-    color: var(--modal-text-dark); /* Change text color for dark mode */
-}
-;
-
-
-        .close {
-            float: right;
-            font-size: 28px;
             cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: opacity 0.4s ease;
         }
-
-        /* Input and Labels */
-        label {
+        .splash-screen-content {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 2.5rem 1.5rem;
+            border-radius: 2rem;
+            max-width: 90%;
+            margin: 24px;
+            box-shadow: 0 15px 40px rgba(236, 72, 153, 0.5); 
+            border: 3px solid var(--theme-accent);
+        }
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: var(--theme-arrow); 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            justify-content: center;
+            gap: 1rem;
         }
-
-        .no-animation .button {
-            transition: none;
+        .instructions-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--theme-accent); 
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
         }
-
-        /* Button click feedback */
-        .button:active {
-         transform: scale(0.95); /* Button shrinks slightly when clicked */
-         background-color: var(--button-hover-color); /* Slightly change background color */
+        .instruction-item {
+            font-size: 1rem;
+            margin-bottom: 0.4rem;
+            padding: 0 1rem;
+            color: #E5E7EB;
         }
-
-        /* Splash screen fade-out */
-        .splash-screen.fade-out {
-        opacity: 0;
-        transform: scale(0.9);
-        transition: opacity 0.5s ease, transform 0.5s ease;
-
-        .log-entry {
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
+        .click-to-start {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #FBBF24;
+            animation: pulse 1.5s infinite;
         }
-
-        .log-entry.visible {
-        opacity: 1;
-        transform: translateY(0);
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
         }
-
-        .welcome-message {
-        margin-bottom: 20px; /* Adjust this value for desired spacing */
+        
+        /* --- MODAL STYLES --- */
+        .settings-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-
-
-
-
-
-}
-
-
-
-
-
+        .settings-modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .settings-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-height: 80%;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 60;
+            border-top-left-radius: 2rem;
+            border-top-right-radius: 2rem;
+        }
+        .settings-modal-overlay.open .settings-panel {
+            transform: translateY(0);
+        }
+        
+        @media (min-width: 640px) {
+            .settings-panel {
+                width: 400px;
+                right: 0;
+                left: auto;
+                top: 0;
+                height: 100%;
+                max-height: 100%;
+                border-radius: 0;
+                border-top-left-radius: 2rem;
+                transform: translateX(100%);
+                transition: transform 0.4s ease-out;
+            }
+            .settings-modal-overlay.open .settings-panel {
+                transform: translateX(0);
+            }
+        }
+        
+        #settings-button {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 40;
+        }
+        
+        /* Theme Selection Button Styling */
+        .theme-select-button {
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            color: white !important; /* Ensure text is visible on colored buttons */
+        }
+        .theme-select-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .theme-select-button.selected {
+            border: 3px solid var(--theme-accent);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
         
     </style>
 </head>
-<body>
-
+<body data-theme="default">
     
-
     <div class="splash-screen" id="splashScreen">
-        <div class="welcome-message">Welcome to the Driving Direction Game!</div>
-        <div class="instructions"><strong>Instructions:</strong></div>
-        <div class="instruction-item">1. Click "Next Direction" to receive your driving instruction.</div>
-        <div class="instruction-item">2. If you only need to turn, click "Left or Right.".</div>
-        <div class="instruction-item">3. Follow the on-screen directions precisely.</div>
-        <div class="instruction-item">4. Use the buttons to navigate through roundabouts.</div>
-        <div class="instruction-item">5. Navigate roundabouts using the provided buttons.</div>
-        <div class="click-to-start">Click to start playing!</div>
-    </div> <!-- Splash Screen -->
-    
-
-    
-    
-
-    <div class="title">Driving Direction Game</div>
-
-    <!-- Side Buttons for Start Again and Settings -->
-    <button id="startAgainButton" class="button start-again-button" aria-label="Start Again">Start Again</button>
-    <div class="side-buttons">
-        <button id="settingsButton" class="settings-button" aria-label="Open Settings">⚙️</button>
-    </div>
-
-    <div class="current-direction" id="currentDirection" aria-live="polite">Start Your Engine!</div>
-
-
-    <div class="button-container">
-        <button id="directionButton" class="button" aria-label="Get Direction">Next Direction</button>
-        <button id="leftOrRightBtn" class="button" aria-label="Left Or Right">Left Or Right</button>
-      </div>
-
-
-    <div class="roundabouts">
-        <h3>Roundabouts</h3>
-        <div class="roundabout-buttons">
-            <button id="roundabout2" class="button" aria-label="Roundabout with 2 exits">2 Exits</button>
-            <button id="roundabout3" class="button" aria-label="Roundabout with 3 exits">3 Exits</button>
-            <button id="roundabout4" class="button" aria-label="Roundabout with 4 exits">4 Exits</button>
-            <button id="roundabout5" class="button" aria-label="Roundabout with 5 exits">5 Exits</button>
+        <div class="splash-screen-content">
+            <div class="welcome-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                GPS Training Hub
+            </div>
+            <p class="text-lg text-gray-300 mb-4">Master quick direction changes without stress.</p>
+            
+            <div class="instructions-header">HOW TO PLAY:</div>
+            <div class="instruction-item">1. **Tap Request** for your driving command.</div>
+            <div class="instruction-item">2. Check the **arrow** for the precise turn angle.</div>
+            <div class="instruction-item">3. Use the **gear icon** ⚙️ for mode changes and settings.</div>
+            <div class="click-to-start">TAP ANYWHERE TO START YOUR ENGINE!</div>
         </div>
-    </div>
-
-    <div id="settingsModal" class="modal">
-        <div class="modal-content">
-            <span id="closeModal" class="close">&times;</span>
-            <h2>Settings</h2>
-            <label>
-                <input type="checkbox" id="toggleSound" checked> Engine Sound
-            </label>
-            <label>
-                <input type="checkbox" id="toggleBeep"> Beep Beep
-            </label>
-            <label>
-                <input type="checkbox" id="toggleGPSVoice" checked> GPS Voice
-            </label>
-            <label>
-                <input type="color" id="buttonColorPicker"> Button Color
-            </label>
-            <label>
-                <input type="checkbox" id="toggleDarkMode"> Dark Mode
-            </label>
-        </div>
-    </div>
-
-    <!-- Audio Elements -->
-    <audio id="startSound" src="sounds/engine-start.mp3"></audio>
-    <audio id="beepSound" src="sounds/beep.mp3"></audio>
-    <audio id="gpsLeft" src="sounds/gps-left.mp3"></audio>
-    <audio id="gpsRight" src="sounds/gps-right.mp3"></audio>
-    <audio id="gpsStraight" src="sounds/gps-straight.mp3"></audio>
-    <audio id="gpsExit1" src="sounds/gps-exit-1.mp3"></audio>
-    <audio id="gpsExit2" src="sounds/gps-exit-2.mp3"></audio>
-    <audio id="gpsExit3" src="sounds/gps-exit-3.mp3"></audio>
-    <audio id="gpsExit4" src="sounds/gps-exit-4.mp3"></audio>
-    <audio id="gpsExit5" src="sounds/gps-exit-5.mp3"></audio>
-
-    <div class="log" id="log"></div> <!-- Log -->
-
-    <script>
-        function debounce(func, delay) {
-    let timeoutId;
-    return function(...args) {
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-        timeoutId = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-}
-
-        const directions = ['Left', 'Right', 'Straight'];
-        let log = []; // Stores direction history
-        let soundsEnabled = true;
-        let gpsVoiceEnabled = true;
-        let beepEnabled = false;
-        let darkModeEnabled = false;
-
-        const currentDirectionElement = document.getElementById('currentDirection');
-        const logElement = document.getElementById('log');
-        const splashScreen = document.getElementById('splashScreen');
-
-        /* Splash Screen Click */
-        splashScreen.addEventListener('click', function () {
-    this.style.opacity = 0; // Fade out effect
-    setTimeout(() => this.style.display = 'none', 500); // Hide after fade-out
-    if (soundsEnabled) playSound('startSound'); // Play sound if enabled
-});
-
-
-        /* Show a direction with sound and GPS voice */
-        let lastDirection = ""; // To store the last shown direction
-let lastDirectionCount = 0; // Count of consecutive same directions
-let lastLeftOrRight = ""; // To store the last left/right direction
-let lastLeftOrRightCount = 0; // Count of consecutive left/right same directions
-
-// Sample directions for the 'Get Direction' button
-
-// Add event listener for "Get Direction" button
-document.getElementById('directionButton').addEventListener('click', () => {
-    const direction = directions[Math.floor(Math.random() * directions.length)];
-});
-
-// Add event listener for "Left or Right" button
-document.getElementById('leftOrRightBtn').addEventListener('click', () => {
-    showLeftOrRightDirection();
-});
-
-let straightCount = 0;
-let timeoutId;
-
-async function showDirection(direction) {
-    let directionText;
-
-    if (direction === "Straight") {
-  straightCount++;
-} else {
-  straightCount = 0; // Reset counter if direction changes
-}
-
-// Check if a timeout is already set
-if (timeoutId) {
-  clearTimeout(timeoutId);
-}
-
-// Set a new timeout if going straight for a long time
-if (straightCount >= 1) { // Adjust the threshold as needed
-  timeoutId = setTimeout(() => {
-    showStraightPrompt();
-  }, 60000); // 60 seconds
-}
-
-    if (direction === 'Straight') {
-        directionText = `Go ${direction}`;
-    } else {
-        directionText = `Turn ${direction}`;
-    }
-
-    // Check if the current direction is the same as the last one
-    if (direction === lastDirection) {
-        lastDirectionCount++;
-    } else {
-        lastDirection = direction; // Update last direction
-        lastDirectionCount = 1; // Reset count
-    }
-
-    // If the direction has been shown twice already, choose a new one
-    if (lastDirectionCount > 2) {
-        // Get a different direction
-        let newDirection;
-        do {
-            newDirection = directions[Math.floor(Math.random() * directions.length)];
-        } while (newDirection === lastDirection); // Keep choosing until it's different
-
-        showDirection(newDirection); // Recursively show the new direction
-        return; // Exit this function
-    }
-
-    function showStraightPrompt() {
-  // Display the prompt (e.g., using a modal or alert)
-  alert("You've been going straight for a while. Consider changing direction.");
-
-  // Reset the straight count
-  straightCount = 0;
-}
-    currentDirectionElement.textContent = directionText;
-    addDirectionToLog(directionText);
-
-      // Await for the UI update before playing audio
-    await new Promise(resolve => requestAnimationFrame(resolve));
-
+    </div> <button id="settings-button" class="p-3 rounded-full hover:opacity-80 transition duration-150">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09z"></path>
+        </svg>
+    </button>
     
-    
-    // Add 'active' class for visual feedback
-    currentDirectionElement.classList.add('active');
-    setTimeout(() => currentDirectionElement.classList.remove('active'), 500); // Remove after 500ms
-
-    setTimeout(() => {
-    playDirectionSound(direction);
-    playBeepSound();
-  }, 200); // Adjust the delay as needed
-}
-
-async function showLeftOrRightDirection() {
-    const leftOrRight = Math.random() < 0.5 ? 'Left' : 'Right';
-    let directionText = `Turn ${leftOrRight}`;
-
-    // Check if the current left/right direction is the same as the last one
-    if (leftOrRight === lastLeftOrRight) {
-        lastLeftOrRightCount++;
-    } else {
-        lastLeftOrRight = leftOrRight; // Update last left/right direction
-        lastLeftOrRightCount = 1; // Reset count
-    }
-
-    // If the left/right direction has been shown twice already, choose a new one
-    if (lastLeftOrRightCount > 2) {
-        // Get a different direction
-        let newDirection;
-        do {
-            newDirection = Math.random() < 0.5 ? 'Left' : 'Right';
-        } while (newDirection === lastLeftOrRight); // Keep choosing until it's different
-
-        directionText = `Turn ${newDirection}`; // Update to the new direction
-        lastLeftOrRight = newDirection; // Update last left/right
-    }
-
-    currentDirectionElement.textContent = directionText;
-    addDirectionToLog(directionText);
-      // Await for the UI update before playing audio
-  await new Promise(resolve => requestAnimationFrame(resolve));
-    
-    // Add 'active' class for visual feedback
-    currentDirectionElement.classList.add('active');
-    setTimeout(() => currentDirectionElement.classList.remove('active'), 500); // Remove after 500ms
-
-    setTimeout(() => {
-    playDirectionSound(leftOrRight);
-    playBeepSound();
-  }, 200); // Adjust the delay as needed
-}
-
-
-
-
-
-
-
-
-function savePreferences() {
-    const preferences = {
-        soundsEnabled,
-        gpsVoiceEnabled,
-        beepEnabled,
-        darkModeEnabled,
-        buttonColor: document.documentElement.style.getPropertyValue('--button-bg-color') // Save current button color
-    };
-    localStorage.setItem('preferences', JSON.stringify(preferences));
-}
-
-
-function loadPreferences() {
-    const preferences = JSON.parse(localStorage.getItem('preferences'));
-    if (preferences) {
-        soundsEnabled = preferences.soundsEnabled;
-        gpsVoiceEnabled = preferences.gpsVoiceEnabled;
-        beepEnabled = preferences.beepEnabled;
-        toggleDarkMode(preferences.darkModeEnabled);
-
-        // Restore button color
-        if (preferences.buttonColor) {
-            document.documentElement.style.setProperty('--button-bg-color', preferences.buttonColor);
-            document.documentElement.style.setProperty('--button-hover-color', preferences.buttonColor);
-            document.getElementById('buttonColorPicker').value = preferences.buttonColor; // Set the color picker value
-        }
-
-        // Set the initial state of checkboxes based on preferences
-        document.getElementById('toggleSound').checked = soundsEnabled;
-        document.getElementById('toggleGPSVoice').checked = gpsVoiceEnabled;
-        document.getElementById('toggleBeep').checked = beepEnabled;
-        document.getElementById('toggleDarkMode').checked = darkModeEnabled; 
-    }
-}
-
-
-document.getElementById('toggleSound').addEventListener('change', function (e) {
-    soundsEnabled = e.target.checked;
-    savePreferences(); // Save preference change
-});
-
-document.getElementById('toggleBeep').addEventListener('change', function (e) {
-    beepEnabled = e.target.checked;
-    savePreferences(); // Save preference change
-});
-
-document.getElementById('toggleGPSVoice').addEventListener('change', function (e) {
-    gpsVoiceEnabled = e.target.checked;
-    savePreferences(); // Save preference change
-});
-
-document.getElementById('toggleDarkMode').addEventListener('change', function (e) {
-    toggleDarkMode(e.target.checked);
-    savePreferences(); // Save preference change
-});
-
-
-
-window.addEventListener('load', loadPreferences);
-window.addEventListener('beforeunload', savePreferences);
-
-
-function addDirectionToLog(direction) {
-    const newLogEntry = document.createElement('div');
-    newLogEntry.classList.add('log-entry'); // Apply log-entry class
-    newLogEntry.textContent = direction;
-    
-    // Prepend new entry to log and apply visible class for fade-in
-    logElement.prepend(newLogEntry);
-    setTimeout(() => newLogEntry.classList.add('visible'), 10); // Trigger fade-in after a slight delay
-}
-
-
-        /* Play sound based on direction */
-        function playDirectionSound(direction) {
-            if (gpsVoiceEnabled) {
-                const soundId = {
-                    'Left': 'gpsLeft',
-                    'Right': 'gpsRight',
-                    'Straight': 'gpsStraight'
-                }[direction];
-                const sound = document.getElementById(soundId);
-                if (sound) sound.play();
-            }
-        }
-
-        /* Play beep sound if enabled */
-        function playBeepSound() {
-            if (beepEnabled) {
-                playSound('beepSound');
-            }
-        }
-
-        /* Add direction to log (prepend) */
-        function addDirectionToLog(direction) {
-            log.unshift(direction); // Add new direction to the start of the log array
-            logElement.innerHTML = log.join('<br/>'); // Update the log display
-        }
-
-        /* Roundabout function */
-        function handleRoundabout(exits) {
-            const exitNumber = Math.floor(Math.random() * exits) + 1; // Random exit number
-            const exitDirection = `Take the ${exitNumber}${getOrdinal(exitNumber)} exit`;
-            currentDirectionElement.textContent = exitDirection;
-            addDirectionToLog(exitDirection);
-            playRoundaboutGPS(exitNumber);
-            playBeepSound(); // Play beep sound if enabled
-        }
-
-        /* Play roundabout GPS voice */
-        function playRoundaboutGPS(exit) {
-            if (gpsVoiceEnabled) {
-                const sound = document.getElementById(`gpsExit${exit}`);
-                if (sound) sound.play();
-            }
-        }
-
-        /* Get ordinal suffix for exit */
-        function getOrdinal(n) {
-            return ["th", "st", "nd", "rd"][n % 10] || "th";
-        }
-
-        /* Event listeners for roundabouts */
-        document.getElementById('roundabout2').addEventListener('click', debounce(() => handleRoundabout(2), 600));
-        document.getElementById('roundabout3').addEventListener('click', debounce(() => handleRoundabout(3), 600));
-        document.getElementById('roundabout4').addEventListener('click', debounce(() => handleRoundabout(4), 600));
-        document.getElementById('roundabout5').addEventListener('click', debounce(() => handleRoundabout(5), 600));
+    <div id="app" class="w-full max-w-xl opacity-0 transition-opacity duration-500">
         
+        <div class="mode-selector mb-6 flex flex-col gap-4 sm:flex-row">
+            <button id="mode-junction" class="mode-button flex-1 py-3 px-6 font-bold rounded-2xl shadow-lg transition duration-200 hover:opacity-70" data-mode="junction">
+                🚗 At Junction
+            </button>
+            <button id="mode-roundabout" class="mode-button flex-1 py-3 px-6 font-bold rounded-2xl shadow-lg transition duration-200 hover:opacity-70" data-mode="roundabout">
+                🛞 In Roundabout
+            </button>
+        </div>
+
+        <div id="roundabout-settings" class="card p-4 mb-6 hidden">
+            <label class="block font-semibold mb-3">Select the number of exits:</label>
+            <div id="exit-buttons" class="flex justify-between space-x-2">
+                <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="2">2</button>
+                <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="3">3</button>
+                <button class="exit-button w-1/5 py-2 exit-button-active bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="4">4</button>
+                <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="5">5</button>
+                <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="6">6</button>
+            </div>
+            <input type="hidden" id="exits-select" value="4">
+        </div>
+
+        <div id="direction-card" class="card text-center mb-6 p-6">
+            <p id="direction-text" class="text-3xl sm:text-4xl font-extrabold my-4 h-12 flex items-center justify-center">
+                Start Your Engine!
+            </p>
+
+            <div class="arrow-container">
+                <svg id="direction-arrow" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" transform="rotate(0)">
+                    <path d="M16.01 11H4c-1.1 0-2 .9-2 2s.9 2 2 2h12.01v3L21 13l-4.99-4v3z" />
+                </svg>
+            </div>
+
+            <button id="request-direction" class="w-full py-5 mt-4 text-white font-black text-2xl rounded-2xl shadow-xl transition duration-200 hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-4" style="--tw-ring-color: var(--theme-accent);">
+                🎯 Request Direction
+            </button>
+        </div>
+        
+        <div class="card p-4">
+            <h2 class="text-xl font-bold mb-3 border-b pb-2">Recent Directions</h2>
+            <ul id="history-list" class="space-y-2">
+                <li class="italic text-sm">No directions yet.</li>
+            </ul>
+        </div>
+
+        <div id="status-message" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center p-4 z-50">
+            <div class="card p-6 text-center max-w-sm">
+                <p id="status-text" class="text-xl font-semibold mb-4"></p>
+                <button onclick="document.getElementById('status-message').style.display='none'" class="bg-pink-500 text-white py-2 px-6 rounded-full font-bold hover:bg-pink-600 transition">OK</button>
+            </div>
+        </div>
+        
+        <div id="settings-modal-overlay" class="settings-modal-overlay" onclick="closeSettingsModal()">
+            <div id="settings-panel" class="settings-panel card p-6 overflow-y-auto" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Game Settings</h2>
+                    <button class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" onclick="closeSettingsModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                
+                <button id="reset-game" class="reset-button w-full py-3 mb-6 font-semibold rounded-2xl shadow-md transition duration-200 hover:opacity-80 active:scale-[0.98]">
+                    🔄 Reset Game
+                </button>
+
+                <div class="space-y-4 text-base">
+                    
+                    <p class="font-bold border-t pt-4 border-gray-100 dark:border-gray-700">Appearance</p>
+                    <div class="flex flex-wrap gap-3" id="theme-selector-buttons">
+                        </div>
+
+                    <div class="flex justify-between items-center pt-4">
+                        <label for="dark-mode-toggle" class="select-none">🌑 Dark Mode</label>
+                        <input type="checkbox" id="dark-mode-toggle" class="h-6 w-6 rounded text-pink-500 focus:ring-pink-500" style="--tw-ring-color: var(--theme-accent);">
+                    </div>
+                    
+                    <p class="font-bold border-t pt-4 border-gray-100 dark:border-gray-700">Audio Controls</p>
+                    <div class="flex justify-between items-center">
+                        <label for="voice-toggle" class="select-none">🗣️ GPS Voice Guidance</label>
+                        <input type="checkbox" id="voice-toggle" class="h-6 w-6 rounded focus:ring-pink-500" style="--tw-ring-color: var(--theme-accent);">
+                    </div>
+                     <div class="flex justify-between items-center">
+                        <label for="horn-toggle" class="select-none">📢 Horn Feedback (On Interrupt)</label>
+                        <input type="checkbox" id="horn-toggle" class="h-6 w-6 rounded focus:ring-pink-500" style="--tw-ring-color: var(--theme-accent);">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // --- GLOBAL VARIABLES (Provided by Canvas Environment) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // --- GAME STATE ---
+        let mode = 'junction'; // 'junction' or 'roundabout'
+        let exits = 4;
+        let recentDirections = [null, null]; // [most recent, second most recent]
+        let history = [];
+        let isSpeaking = false; 
+        let hasStarted = false; 
+        let colorTheme = 'default'; // Added theme state
+        let isDarkMode = false; // Added dark mode state
 
 
-        /* Get Direction Button Event */
-        document.getElementById('directionButton').addEventListener('click', debounce(function () {
-    const randomDirection = directions[Math.floor(Math.random() * directions.length)];
-    showDirection(randomDirection);
-    playBeepSound(); // Play beep sound when direction is fetched
-}, 500)); // Adjust the delay as needed
+        // --- THEME MAPPING (Used for button generation) ---
+        const themeColors = {
+            'default': { name: 'Pink/Teal', light: 'bg-pink-500', dark: 'bg-purple-700' },
+            'teal': { name: 'Teal/Green', light: 'bg-cyan-500', dark: 'bg-green-700' },
+            'blue': { name: 'Blue/Yellow', light: 'bg-blue-500', dark: 'bg-yellow-700' },
+        };
+        
+        // Helper to dynamically get the CSS variable-defined accent color for buttons
+        function getThemeAccentColor(themeKey) {
+            const tempDiv = document.createElement('div');
+            tempDiv.setAttribute('data-theme', themeKey);
+            // Temporarily append to body to read styles
+            document.body.appendChild(tempDiv);
+            
+            // Temporarily switch dark mode class if needed
+            if (isDarkMode) {
+                tempDiv.classList.add('dark-mode');
+            }
+            
+            // Read the CSS variable
+            const color = getComputedStyle(tempDiv).getPropertyValue('--theme-accent').trim();
+            
+            // Clean up
+            document.body.removeChild(tempDiv);
+            
+            return color;
+        }
 
 
-        /* Settings Modal */
-        const settingsModal = document.getElementById('settingsModal');
-        document.getElementById('settingsButton').addEventListener('click', () => settingsModal.style.display = 'flex');
-        document.getElementById('closeModal').addEventListener('click', () => settingsModal.style.display = 'none');
+        // --- AUDIO FILE MAPPING ---
+        const audioFiles = {
+            'engine': 'engine-start.mp3',
+            'horn': 'beep.mp3',
+            'straight': 'gps-straight.mp3',
+            'left': 'gps-left.mp3',
+            'right': 'gps-right.mp3',
+            'exit-1': 'gps-exit-1.mp3',
+            'exit-2': 'gps-exit-2.mp3',
+            'exit-3': 'gps-exit-3.mp3',
+            'exit-4': 'gps-exit-4.mp3',
+            'exit-5': 'gps-exit-5.mp3',
+        };
 
-        /* Settings Change Handlers */
-        document.getElementById('toggleSound').addEventListener('change', e => soundsEnabled = e.target.checked);
-        document.getElementById('toggleBeep').addEventListener('change', e => beepEnabled = e.target.checked);
-        document.getElementById('toggleGPSVoice').addEventListener('change', e => gpsVoiceEnabled = e.target.checked);
-        document.getElementById('toggleDarkMode').addEventListener('change', e => toggleDarkMode(e.target.checked));
-        document.getElementById('buttonColorPicker').addEventListener('input', e => {
-        document.documentElement.style.setProperty('--button-bg-color', e.target.value);
-        document.documentElement.style.setProperty('--button-hover-color', e.target.value); // Keep hover color the same
+        // --- UI ELEMENTS ---
+        const ui = {
+            splashScreen: document.getElementById('splashScreen'),
+            appContainer: document.getElementById('app'),
+            settingsButton: document.getElementById('settings-button'),
+            settingsModalOverlay: document.getElementById('settings-modal-overlay'),
+            modeJunction: document.getElementById('mode-junction'),
+            modeRoundabout: document.getElementById('mode-roundabout'),
+            roundaboutSettings: document.getElementById('roundabout-settings'),
+            exitsSelect: document.getElementById('exits-select'),
+            exitButtons: document.querySelectorAll('.exit-button'),
+            directionText: document.getElementById('direction-text'),
+            directionArrow: document.getElementById('direction-arrow'),
+            requestDirection: document.getElementById('request-direction'),
+            resetGame: document.getElementById('reset-game'), 
+            historyList: document.getElementById('history-list'),
+            voiceToggle: document.getElementById('voice-toggle'),
+            hornToggle: document.getElementById('horn-toggle'),
+            darkModeToggle: document.getElementById('dark-mode-toggle'),
+            themeSelector: document.getElementById('theme-selector-buttons'),
+        };
+
+        // --- FIREBASE & AUTH INITIALIZATION ---
+        let db, auth;
+
+        if (firebaseConfig) {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            async function initializeAuth() {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Firebase Auth Error:", error);
+                    showMessage(`Error signing in: ${error.message}`);
+                }
+            }
+            initializeAuth();
+        } 
+
+        // --- MODAL CONTROL FUNCTIONS ---
+
+        function openSettingsModal() {
+            renderThemeSelector();
+            ui.settingsModalOverlay.classList.add('open');
+        }
+
+        function closeSettingsModal() {
+            ui.settingsModalOverlay.classList.remove('open');
+        }
+
+        // --- UTILITY FUNCTIONS ---
+
+        function showMessage(text) {
+             const messageBox = document.getElementById('status-message');
+             document.getElementById('status-text').textContent = text;
+             messageBox.style.display = 'flex';
+        }
+        
+        function playAudio(key) {
+            if (!audioFiles[key]) return Promise.resolve();
+            const audioUrl = audioFiles[key];
+            try {
+                const audio = new Audio(audioUrl);
+                
+                return new Promise((resolve) => {
+                    audio.onended = () => resolve();
+                    audio.onerror = (e) => {
+                        console.error(`Audio Load Error on file: ${audioUrl}`, e);
+                        resolve();
+                    };
+                    
+                    audio.play().then(() => {
+                    }).catch(e => {
+                        console.warn(`Audio playback blocked/failed for ${audioUrl}.`, e); 
+                        resolve();
+                    });
+                });
+            } catch (error) {
+                console.error(`Critical error creating Audio object for ${audioUrl}:`, error);
+                return Promise.resolve();
+            }
+        }
+        
+        async function playGpsVoice(direction) {
+            if (!ui.voiceToggle.checked) return;
+
+            isSpeaking = true;
+            let audioKey = null;
+            const simpleDir = direction.toLowerCase();
+
+            if (simpleDir.includes('u-turn')) {
+                // No specific U-turn audio provided
+            } else if (simpleDir.includes('left')) {
+                audioKey = 'left';
+            } else if (simpleDir.includes('right')) {
+                audioKey = 'right';
+            } else if (simpleDir.includes('straight')) {
+                audioKey = 'straight';
+            } else if (simpleDir.includes('exit')) {
+                const num = parseInt(simpleDir.match(/\d+/)?.[0], 10);
+                if (num >= 1 && num <= 5) {
+                    audioKey = `exit-${num}`;
+                } 
+            }
+
+            if (audioKey) {
+                await playAudio(audioKey);
+            }
+            isSpeaking = false;
+        }
+
+
+        // --- GAME LOGIC ---
+
+        const rotationMap = {
+            'straight': -90, 
+            'left': -180,    
+            'right': 0,      
+            'u-turn': 90, 
+        };
+
+        function getDirectionIcon(direction) {
+            const simpleDir = direction.toLowerCase();
+            if (simpleDir.includes('u-turn')) return '<span class="text-purple-500">↩️</span>'; 
+            if (simpleDir.includes('left')) return '<span class="text-red-500">◀️</span>'; 
+            if (simpleDir.includes('right')) return '<span class="text-green-500">▶️</span>'; 
+            if (simpleDir.includes('straight') || simpleDir.includes('1st exit')) return '<span class="text-blue-500">⬆️</span>'; 
+            if (simpleDir.includes('exit')) return '<span class="text-yellow-500">↪️</span>'; 
+            return '•';
+        }
+
+        function getJunctionDirection() {
+            const options = ['Turn left', 'Go straight', 'Turn right', 'Make a U-turn'];
+            let newDirection;
+            const [mostRecent, secondRecent] = recentDirections;
+            
+            // Check for forbidden sequence: same direction three times in a row
+            const isForbiddenSequence = (mostRecent !== null && mostRecent === secondRecent);
+            const forbiddenDirection = isForbiddenSequence ? mostRecent : null;
+            
+            do {
+                newDirection = options[Math.floor(Math.random() * options.length)];
+            } while (newDirection === forbiddenDirection);
+
+            return newDirection;
+        }
+
+        function getRoundaboutDirection() {
+            const numExits = exits; 
+            
+            const getOrdinal = (n) => {
+                const s = ["th", "st", "nd", "rd"];
+                const v = n % 100;
+                return n + (s[(v - 20) % 10] || s[v] || s[0]);
+            };
+
+            const options = Array.from({ length: numExits }, (_, i) => `${getOrdinal(i + 1)} Exit`);
+
+            let newDirection;
+            do {
+                newDirection = options[Math.floor(Math.random() * options.length)];
+            } while (newDirection === recentDirections[0]); 
+
+            return newDirection;
+        }
+
+        function getRotation(direction) {
+            const simpleDir = direction.toLowerCase();
+            if (simpleDir.includes('u-turn')) return rotationMap['u-turn'];
+            if (simpleDir.includes('left')) return rotationMap.left;
+            if (simpleDir.includes('right')) return rotationMap.right;
+            if (simpleDir.includes('straight')) return rotationMap.straight;
+
+            if (simpleDir.includes('exit')) {
+                const num = parseInt(simpleDir.match(/\d+/)?.[0], 10); 
+                if (num > 0) {
+                    const totalExits = exits; 
+                    const angleStep = 360 / totalExits;
+                    const baseOffset = -90; 
+                    return baseOffset + angleStep * (num - 1);
+                }
+            }
+            return rotationMap.straight; 
+        }
+
+        function generateDirection() {
+            
+            if (!hasStarted) {
+                dismissSplashScreen(); 
+            }
+
+            if (isSpeaking) {
+                if (ui.hornToggle.checked) {
+                    playAudio('horn');
+                }
+                return; 
+            }
+            
+            let direction;
+            
+            if (mode === 'junction') {
+                direction = getJunctionDirection(); 
+            } else {
+                direction = getRoundaboutDirection();
+            }
+
+            recentDirections[1] = recentDirections[0];
+            recentDirections[0] = direction;
+
+            ui.directionText.textContent = direction;
+            const rotation = getRotation(direction);
+            ui.directionArrow.style.transform = `rotate(${rotation}deg)`;
+            
+            const timestamp = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            history.unshift({ direction, timestamp });
+            if (history.length > 5) history.pop(); 
+
+            updateHistoryUI();
+            playGpsVoice(direction);
+            
+            ui.requestDirection.textContent = '🎯 Request Next Direction';
+        }
+        
+        function dismissSplashScreen() {
+            if (hasStarted) return;
+            
+            ui.splashScreen.style.opacity = 0;
+            setTimeout(() => {
+                ui.splashScreen.style.display = 'none';
+            }, 400); 
+
+            ui.appContainer.style.opacity = 1;
+
+            playAudio('engine'); 
+            hasStarted = true;
+            ui.directionText.textContent = 'Drive Safe!';
+        }
+
+
+        function updateHistoryUI() {
+            ui.historyList.innerHTML = history.map(item => 
+                `<li class="flex justify-between border-b border-gray-100 dark:border-gray-700 pb-1">
+                    <span class="font-semibold flex items-center gap-2">
+                        ${getDirectionIcon(item.direction)} ${item.direction}
+                    </span>
+                    <span class="text-xs text-gray-400">${item.timestamp}</span>
+                </li>`
+            ).join('');
+
+            if (history.length === 0) {
+                 ui.historyList.innerHTML = '<li class="italic text-sm">No directions yet.</li>';
+            }
+        }
+
+        function updateExitSelection(newExits) {
+            exits = newExits;
+            ui.exitsSelect.value = newExits; 
+            
+            ui.exitButtons.forEach(button => {
+                button.classList.remove('exit-button-active');
+                if (parseInt(button.dataset.exits, 10) === newExits) {
+                    button.classList.add('exit-button-active');
+                }
+            });
+            newGame();
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            ui.modeJunction.classList.remove('active-mode');
+            ui.modeRoundabout.classList.remove('active-mode');
+            ui.roundaboutSettings.classList.add('hidden');
+
+            if (mode === 'junction') {
+                ui.modeJunction.classList.add('active-mode');
+            } else {
+                ui.modeRoundabout.classList.add('active-mode');
+                ui.roundaboutSettings.classList.remove('hidden');
+                updateExitSelection(exits); 
+            }
+            newGame();
+        }
+
+        function newGame() {
+            isSpeaking = false;
+            history = [];
+            recentDirections = [null, null]; 
+            ui.directionText.textContent = hasStarted ? 'Ready for a new route?' : 'Start Your Engine!';
+            ui.directionArrow.style.transform = `rotate(0deg)`;
+            ui.requestDirection.textContent = '🎯 Request Direction';
+            ui.requestDirection.disabled = false;
+            updateHistoryUI();
+            closeSettingsModal();
+        }
+
+        // --- THEME FUNCTIONS ---
+
+        function toggleDarkMode(isDark) {
+            isDarkMode = isDark;
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            localStorage.setItem('darkMode', isDark);
+            // Re-render theme buttons to reflect potential dark mode changes
+            renderThemeSelector(); 
+        }
+        
+        function setColorTheme(themeKey) {
+            colorTheme = themeKey;
+            document.body.dataset.theme = themeKey;
+            localStorage.setItem('colorTheme', themeKey);
+            // Re-render theme buttons to show selection
+            renderThemeSelector();
+            
+            // Re-apply button colors dynamically
+            const settingsBtn = document.getElementById('settings-button');
+            settingsBtn.style.color = getComputedStyle(document.body).getPropertyValue('--theme-accent').trim();
+            settingsBtn.style.backgroundColor = getComputedStyle(document.body).getPropertyValue('--theme-card-bg').trim();
+        }
+
+        function renderThemeSelector() {
+            ui.themeSelector.innerHTML = ''; // Clear existing buttons
+            
+            Object.keys(themeColors).forEach(key => {
+                const theme = themeColors[key];
+                const isSelected = key === colorTheme;
+                const button = document.createElement('button');
+                
+                // Get the calculated accent color
+                const accentColor = getThemeAccentColor(key); 
+
+                button.className = `theme-select-button p-2 rounded-lg font-semibold text-sm`;
+                button.textContent = theme.name;
+                button.dataset.themeKey = key;
+                button.style.backgroundColor = accentColor;
+                
+                if (isSelected) {
+                    button.classList.add('selected');
+                }
+                
+                button.addEventListener('click', () => setColorTheme(key));
+                ui.themeSelector.appendChild(button);
+            });
+        }
+        
+        /**
+         * Load and apply settings from localStorage on startup.
+         */
+        function loadSettings() {
+            // Theme
+            const savedTheme = localStorage.getItem('colorTheme') || 'default';
+            setColorTheme(savedTheme); 
+
+            const savedDarkMode = localStorage.getItem('darkMode');
+            isDarkMode = (savedDarkMode === 'true');
+            ui.darkModeToggle.checked = isDarkMode;
+            toggleDarkMode(isDarkMode); 
+
+            // Voice Toggle
+            const savedVoice = localStorage.getItem('voiceEnabled');
+            const voiceEnabled = (savedVoice !== null) ? (savedVoice === 'true') : true; 
+            ui.voiceToggle.checked = voiceEnabled;
+            
+            // Horn Toggle
+            const savedHorn = localStorage.getItem('hornEnabled');
+            const hornEnabled = (savedHorn !== null) ? (savedHorn === 'true') : true; 
+            ui.hornToggle.checked = hornEnabled;
+        }
+
+        // --- INITIALIZATION & EVENT LISTENERS ---
+
+        window.onload = function() {
+            // 1. Load Settings
+            loadSettings();
+            
+            // 2. Initial Game Setup
+            setMode('junction');
+        };
+
+        // 3. Event Listeners
+        ui.splashScreen.addEventListener('click', dismissSplashScreen);
+        ui.settingsButton.addEventListener('click', openSettingsModal); // Open Modal
+        
+        ui.modeJunction.addEventListener('click', () => setMode('junction'));
+        ui.modeRoundabout.addEventListener('click', () => setMode('roundabout'));
+
+        ui.requestDirection.addEventListener('click', generateDirection); 
+        
+        ui.resetGame.addEventListener('click', newGame); // Reset button
+
+        // Exit buttons listener
+        ui.exitButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const newExits = parseInt(button.dataset.exits, 10);
+                updateExitSelection(newExits);
+            });
         });
-
-        /* Toggle Dark Mode */
-        function toggleDarkMode(enabled) {
-            darkModeEnabled = enabled;
-            document.body.classList.toggle('dark-mode', enabled);
-        }
-
-        /* Restart Game */
-        document.getElementById('startAgainButton').addEventListener('click', function () {
-    const confirmRestart = confirm("Are you sure you want to restart the game?");
-    if (confirmRestart) {
-        log = [];
-        logElement.innerHTML = '';
-        currentDirectionElement.textContent = 'Start Your Engine!';
-        if (soundsEnabled) playSound('startSound');
-    }
-});
-
-
-
-        /* Play any sound */
-        function playSound(soundId) {
-            const sound = document.getElementById(soundId);
-            if (sound) sound.play();
-        }
+        
+        // Dark Mode Toggle Listener (Persist setting)
+        ui.darkModeToggle.addEventListener('change', (e) => {
+            toggleDarkMode(e.target.checked);
+        });
+        
+        // Voice Toggle Listener (Persist setting)
+        ui.voiceToggle.addEventListener('change', (e) => {
+            localStorage.setItem('voiceEnabled', e.target.checked);
+        });
+        
+        // Horn Toggle Listener (Persist setting)
+        ui.hornToggle.addEventListener('change', (e) => {
+            localStorage.setItem('hornEnabled', e.target.checked);
+        });
+        
     </script>
 </body>
 </html>
+```eof
+
+This is the fully featured **Random Direction Navigator Game**. Please confirm if this is the correct game, and we can continue working on it!
