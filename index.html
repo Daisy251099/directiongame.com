@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Direction Navigator</title>
+    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         
@@ -287,6 +289,7 @@
 </head>
 <body data-theme="default">
     
+    <!-- Splash Screen -->
     <div class="splash-screen" id="splashScreen">
         <div class="splash-screen-content">
             <div class="welcome-title">
@@ -301,15 +304,20 @@
             <div class="instruction-item">3. Use the **gear icon** ⚙️ for mode changes and settings.</div>
             <div class="click-to-start">TAP ANYWHERE TO START YOUR ENGINE!</div>
         </div>
-    </div> <button id="settings-button" class="p-3 rounded-full hover:opacity-80 transition duration-150">
+    </div> <!-- Splash Screen End -->
+
+    <!-- Settings Button (Fixed, Top Right) -->
+    <button id="settings-button" class="p-3 rounded-full hover:opacity-80 transition duration-150">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09z"></path>
         </svg>
     </button>
     
+    <!-- Main App Content -->
     <div id="app" class="w-full max-w-xl opacity-0 transition-opacity duration-500">
         
+        <!-- Mode Selector (Stacked on Mobile, Row on Desktop) -->
         <div class="mode-selector mb-6 flex flex-col gap-4 sm:flex-row">
             <button id="mode-junction" class="mode-button flex-1 py-3 px-6 font-bold rounded-2xl shadow-lg transition duration-200 hover:opacity-70" data-mode="junction">
                 🚗 At Junction
@@ -319,6 +327,7 @@
             </button>
         </div>
 
+        <!-- Roundabout Exits Input -->
         <div id="roundabout-settings" class="card p-4 mb-6 hidden">
             <label class="block font-semibold mb-3">Select the number of exits:</label>
             <div id="exit-buttons" class="flex justify-between space-x-2">
@@ -331,6 +340,7 @@
             <input type="hidden" id="exits-select" value="4">
         </div>
 
+        <!-- Main Direction Card -->
         <div id="direction-card" class="card text-center mb-6 p-6">
             <p id="direction-text" class="text-3xl sm:text-4xl font-extrabold my-4 h-12 flex items-center justify-center">
                 Start Your Engine!
@@ -342,11 +352,13 @@
                 </svg>
             </div>
 
+            <!-- Main Action Button (Larger for Mobile Touch) -->
             <button id="request-direction" class="w-full py-5 mt-4 text-white font-black text-2xl rounded-2xl shadow-xl transition duration-200 hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-4" style="--tw-ring-color: var(--theme-accent);">
                 🎯 Request Direction
             </button>
         </div>
         
+        <!-- Recent Directions History -->
         <div class="card p-4">
             <h2 class="text-xl font-bold mb-3 border-b pb-2">Recent Directions</h2>
             <ul id="history-list" class="space-y-2">
@@ -354,6 +366,7 @@
             </ul>
         </div>
 
+        <!-- Status Message Box (Replaced alert()) -->
         <div id="status-message" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center p-4 z-50">
             <div class="card p-6 text-center max-w-sm">
                 <p id="status-text" class="text-xl font-semibold mb-4"></p>
@@ -361,6 +374,7 @@
             </div>
         </div>
         
+        <!-- Settings Modal/Panel -->
         <div id="settings-modal-overlay" class="settings-modal-overlay" onclick="closeSettingsModal()">
             <div id="settings-panel" class="settings-panel card p-6 overflow-y-auto" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center mb-6">
@@ -370,6 +384,7 @@
                     </button>
                 </div>
                 
+                <!-- Reset Button -->
                 <button id="reset-game" class="reset-button w-full py-3 mb-6 font-semibold rounded-2xl shadow-md transition duration-200 hover:opacity-80 active:scale-[0.98]">
                     🔄 Reset Game
                 </button>
@@ -377,8 +392,10 @@
                 <div class="space-y-4 text-base">
                     
                     <p class="font-bold border-t pt-4 border-gray-100 dark:border-gray-700">Appearance</p>
+                    <!-- Theme Selector Buttons -->
                     <div class="flex flex-wrap gap-3" id="theme-selector-buttons">
-                        </div>
+                        <!-- Buttons will be generated by JS -->
+                    </div>
 
                     <div class="flex justify-between items-center pt-4">
                         <label for="dark-mode-toggle" class="select-none">🌑 Dark Mode</label>
@@ -433,7 +450,7 @@
             const tempDiv = document.createElement('div');
             tempDiv.setAttribute('data-theme', themeKey);
             // Temporarily append to body to read styles
-            document.body.appendChild(tempDiv);
+            if (document.body) document.body.appendChild(tempDiv);
             
             // Temporarily switch dark mode class if needed
             if (isDarkMode) {
@@ -444,7 +461,7 @@
             const color = getComputedStyle(tempDiv).getPropertyValue('--theme-accent').trim();
             
             // Clean up
-            document.body.removeChild(tempDiv);
+            if (document.body) document.body.removeChild(tempDiv);
             
             return color;
         }
@@ -601,19 +618,38 @@
             return '•';
         }
 
+        /**
+         * Generates a direction for the Junction mode with a 1 in 50 chance for U-turn.
+         * Ensures no direction is repeated three times consecutively.
+         */
         function getJunctionDirection() {
-            const options = ['Turn left', 'Go straight', 'Turn right', 'Make a U-turn'];
-            let newDirection;
+            const uTurnOption = 'Make a U-turn';
+            const standardOptions = ['Turn left', 'Go straight', 'Turn right'];
             const [mostRecent, secondRecent] = recentDirections;
-            
-            // Check for forbidden sequence: same direction three times in a row
-            const isForbiddenSequence = (mostRecent !== null && mostRecent === secondRecent);
-            const forbiddenDirection = isForbiddenSequence ? mostRecent : null;
-            
-            do {
-                newDirection = options[Math.floor(Math.random() * options.length)];
-            } while (newDirection === forbiddenDirection);
 
+            // Helper to check for the triple-repeat forbidden sequence
+            const isForbidden = (direction) => mostRecent === direction && secondRecent === direction;
+
+            // 1. U-turn Check: 1 in 50 chance (2%)
+            if (Math.random() < 0.02) {
+                if (!isForbidden(uTurnOption)) {
+                    return uTurnOption; // U-turn successfully generated
+                }
+                // If U-turn was selected but is forbidden, we fall through to standard selection.
+            }
+
+            // 2. Standard Selection (98% of the time, or if U-turn was forbidden)
+            
+            // Filter out any standard direction that would cause a triple-repeat
+            let availableOptions = standardOptions.filter(opt => !isForbidden(opt));
+
+            // Should not happen, but a safe guard
+            if (availableOptions.length === 0) {
+                 availableOptions = standardOptions; 
+            }
+
+            // Select a random direction from the available, non-forbidden options
+            const newDirection = availableOptions[Math.floor(Math.random() * availableOptions.length)];
             return newDirection;
         }
 
@@ -888,5 +924,3 @@
     </script>
 </body>
 </html>
-```eof
-
