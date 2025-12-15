@@ -10,19 +10,19 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         
-        /* --- THEME VARIABLE DEFINITIONS (3 Schemes) --- */
+        /* --- THEME VARIABLE DEFINITIONS (6 Schemes: Default, Teal, Blue, Trans, Non-Binary, Pan) --- */
 
-        /* 1. DEFAULT (Pink / Purple) - Light Mode */
+        /* 1. DEFAULT (Pink / Teal) - Light Mode */
         :root, body[data-theme="default"]:not(.dark-mode) {
             --theme-bg-start: #A855F7; /* Purple */
             --theme-bg-end: #14B8A6; /* Teal */
             --theme-card-bg: white;
             --theme-text: #1F2937;
-            --theme-accent: #EC4899; /* Pink */
-            --theme-arrow: #14B8A6; /* Teal */
-            --theme-secondary: #F3F4F6; /* Gray-100 */
+            --theme-accent: #EC4899; /* Pink (Main button color) */
+            --theme-arrow: #14B8A6; /* Teal (Arrow color) */
+            --theme-secondary: #F3F4F6; /* Gray-100 (Secondary background) */
         }
-        /* 1. DEFAULT (Pink / Purple) - Dark Mode */
+        /* 1. DEFAULT (Pink / Teal) - Dark Mode */
         body[data-theme="default"].dark-mode {
             --theme-bg-start: #4C1D95; /* Deep Purple */
             --theme-bg-end: #064E3B; /* Deep Green */
@@ -74,8 +74,73 @@
             --theme-arrow: #FFECB3; /* Pale Yellow */
             --theme-secondary: #374151;
         }
+        
+        /* --- FLAG THEMES --- */
+        
+        /* 4. TRANSGENDER PRIDE (`trans`) - Light Mode */
+        body[data-theme="trans"]:not(.dark-mode) {
+            --theme-bg-start: #5BCEFA; /* Light Blue */
+            --theme-bg-end: #F5A9B8; /* Pink */
+            --theme-card-bg: white;
+            --theme-text: #1F2937;
+            --theme-accent: #F5A9B8; /* Pink (Main button color) */
+            --theme-arrow: #5BCEFA; /* Light Blue (Arrow color) */
+            --theme-secondary: #F0F0F0; /* Off-White/White */
+        }
+        /* 4. TRANSGENDER PRIDE (`trans`) - Dark Mode */
+        body[data-theme="trans"].dark-mode {
+            --theme-bg-start: #0A7DC3; /* Darker Blue */
+            --theme-bg-end: #CC5E78; /* Darker Pink */
+            --theme-card-bg: #1F2937;
+            --theme-text: #FFFFFF; /* Pure White Text */
+            --theme-accent: #F5A9B8; /* Pink */
+            --theme-arrow: #5BCEFA; /* Light Blue */
+            --theme-secondary: #374151;
+        }
 
-        /* --- BASE STYLES APPLIED VIA VARIABLES --- */
+        /* 5. NON-BINARY PRIDE (`nonbinary`) - Light Mode */
+        body[data-theme="nonbinary"]:not(.dark-mode) {
+            --theme-bg-start: #FCF434; /* Yellow */
+            --theme-bg-end: #9C59D1; /* Purple */
+            --theme-card-bg: white;
+            --theme-text: #1F2937;
+            --theme-accent: #9C59D1; /* Purple */
+            --theme-arrow: #2C2C2C; /* Black/Dark Gray */
+            --theme-secondary: #F0F0F0;
+        }
+        /* 5. NON-BINARY PRIDE (`nonbinary`) - Dark Mode */
+        body[data-theme="nonbinary"].dark-mode {
+            --theme-bg-start: #2C2C2C; /* Black */
+            --theme-bg-end: #9C59D1; /* Purple */
+            --theme-card-bg: #1F2937;
+            --theme-text: #FFFFFF;
+            --theme-accent: #FCF434; /* Yellow */
+            --theme-arrow: #FFFFFF; /* White */
+            --theme-secondary: #374151;
+        }
+
+        /* 6. PANSEXUAL PRIDE (`pan`) - Light Mode */
+        body[data-theme="pan"]:not(.dark-mode) {
+            --theme-bg-start: #FF218C; /* Pink */
+            --theme-bg-end: #21B1FF; /* Blue */
+            --theme-card-bg: white;
+            --theme-text: #1F2937;
+            --theme-accent: #FFD800; /* Yellow */
+            --theme-arrow: #21B1FF; /* Blue */
+            --theme-secondary: #F0F0F0;
+        }
+        /* 6. PANSEXUAL PRIDE (`pan`) - Dark Mode */
+        body[data-theme="pan"].dark-mode {
+            --theme-bg-start: #9C1045; /* Darker Pink */
+            --theme-bg-end: #10549C; /* Darker Blue */
+            --theme-card-bg: #1F2937;
+            --theme-text: #E5E7EB;
+            --theme-accent: #FFD800; /* Yellow */
+            --theme-arrow: #FF218C; /* Pink */
+            --theme-secondary: #374151;
+        }
+
+        /* --- BASE STYLES APPLIED VIA VARIABLES (Unchanged) --- */
         body {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
@@ -150,7 +215,7 @@
         .voice-mode-button.voice-mode-button-active {
             background-color: var(--theme-arrow) !important; 
             color: white !important; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2p x rgba(0, 0, 0, 0.06);
             transform: scale(1.05);
         }
         
@@ -201,6 +266,7 @@
             transition: opacity 0.4s ease;
         }
         .splash-screen-content {
+            position: relative; /* Added to keep z-index layer for button shadow */
             background-color: rgba(255, 255, 255, 0.15);
             padding: 2.5rem 1.5rem;
             border-radius: 2rem;
@@ -309,6 +375,8 @@
         .theme-select-button {
             transition: transform 0.1s ease, box-shadow 0.2s ease;
             color: white !important; /* Ensure text is visible on colored buttons */
+            /* Force white text on light themes where the button color is light */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); 
         }
         .theme-select-button:hover {
             transform: translateY(-2px);
@@ -430,7 +498,7 @@
                     🔄 Reset Game
                 </button>
 
-                <!-- NEW: Difficulty/Timer Settings -->
+                <!-- Difficulty/Timer Settings -->
                 <p class="font-bold border-t pt-4 border-gray-100 dark:border-gray-700">Challenge Level (Timer)</p>
                 <div id="difficulty-buttons" class="flex justify-between space-x-2 mt-3 mb-6">
                     <button class="difficulty-button flex-1 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-difficulty="easy">Easy</button>
@@ -440,7 +508,7 @@
                 </div>
                 <input type="hidden" id="difficulty-select" value="medium">
 
-                <!-- NEW: Audio Settings -->
+                <!-- Audio Settings -->
                 <p class="font-bold border-t pt-4 border-gray-100 dark:border-gray-700">Audio Mode</p>
                 <div id="voice-mode-buttons" class="flex justify-between space-x-2 mt-3 mb-6">
                     <button class="voice-mode-button flex-1 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-mode="off">No Sound</button>
@@ -483,11 +551,11 @@
         let colorTheme = 'default'; 
         let isDarkMode = false; 
         let userId = null; 
-        let isAudioAllowed = false; // NEW: Flag to control audio playback permission
+        let isAudioAllowed = false; 
 
         // --- TIMER STATE ---
         let difficulty = 'medium'; 
-        let timerDuration = 4000; // Default: 4 seconds
+        let timerDuration = 4000; 
         let timerInterval = null;
         let timeRemaining = 0;
         let timerStartTime = 0;
@@ -501,15 +569,14 @@
         };
 
         // --- AUDIO STATE ---
-        let voiceMode = 'advanced'; // Default to advanced
+        let voiceMode = 'advanced'; 
         let audioContext = null;
-        let audioPlayer = new Audio(); // Reusable audio element for advanced mode
+        // NOTE: The global audioPlayer has been removed to fix the "interrupted by pause" error.
 
-        // --- AUDIO FILE MAPPING (Uses user's local files in the sounds folder) ---
-        // NOTE: The file paths assume a 'sounds/' directory or files in the root for testing.
+        // --- AUDIO FILE MAPPING ---
         const advancedAudioFiles = {
             'engine': 'engine-start.mp3',
-            'horn': 'beep.mp3', // Used for interrupts/times up
+            'horn': 'beep.mp3', 
             'straight': 'gps-straight.mp3',
             'left': 'gps-left.mp3',
             'right': 'gps-right.mp3',
@@ -518,7 +585,7 @@
             'exit-3': 'gps-exit-3.mp3',
             'exit-4': 'gps-exit-4.mp3',
             'exit-5': 'gps-exit-5.mp3',
-            'exit-6': 'gps-exit-5.mp3' // Fallback for 6th exit, using 5th exit sound
+            'exit-6': 'gps-exit-5.mp3' // Reuses exit-5.mp3
         };
 
         // --- THEME MAPPING ---
@@ -526,6 +593,10 @@
             'default': { name: 'Pink/Teal', dark: 'bg-purple-700', light: 'bg-pink-500' },
             'teal': { name: 'Teal/Green', dark: 'bg-green-700', light: 'bg-cyan-500' },
             'blue': { name: 'Blue/Yellow', dark: 'bg-yellow-700', light: 'bg-blue-500' },
+            // New Themes
+            'trans': { name: 'Trans Pride', dark: 'bg-blue-700', light: 'bg-pink-300' },
+            'nonbinary': { name: 'Non-Binary Pride', dark: 'bg-purple-700', light: 'bg-yellow-300' },
+            'pan': { name: 'Pansexual Pride', dark: 'bg-pink-700', light: 'bg-blue-300' },
         };
         
         // --- UI ELEMENTS ---
@@ -558,11 +629,13 @@
         
         // --- UTILITY FUNCTIONS ---
         
+        // Helper to get color from CSS variables defined in the style block
         function getThemeAccentColor(themeKey) {
             const tempDiv = document.createElement('div');
             tempDiv.setAttribute('data-theme', themeKey);
             if (document.body) document.body.appendChild(tempDiv);
             if (isDarkMode) { tempDiv.classList.add('dark-mode'); }
+            // Always try to pull the main button color for the preview button
             const color = getComputedStyle(tempDiv).getPropertyValue('--theme-accent').trim();
             if (document.body) document.body.removeChild(tempDiv);
             return color;
@@ -575,28 +648,24 @@
 
         // --- AUDIO FUNCTIONS ---
 
+        // NOTE: stopCurrentAudio is no longer used for playAdvancedSound, as we now use a local Audio element for each sound.
+        // It remains here to support playBasicSound if needed, though basic sound logic is simple enough not to require it.
+        function stopCurrentAudio(audioElement) {
+            if (audioElement && !audioElement.paused) {
+                audioElement.pause();
+                audioElement.currentTime = 0;
+            }
+        }
+
         function initializeAudioContext() {
-            // Must be called as a result of a user interaction (e.g., button click)
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 console.log("Audio Context Initialized.");
             }
         }
 
-        function stopCurrentAudio() {
-            // Stop HTML5 Audio Player (for Advanced Mode)
-            if (!audioPlayer.paused) {
-                audioPlayer.pause();
-                audioPlayer.currentTime = 0;
-            }
-        }
-
-        // Function to generate a simple beep using Web Audio API (Basic Mode)
         function playBasicSound(frequency = 440, duration = 0.2, type = 'sine') {
-            if (voiceMode !== 'basic' || !isAudioAllowed) return; // Added isAudioAllowed check
-            
-            // initializeAudioContext is now called on splash screen click
-            if (!audioContext) return; 
+            if (voiceMode !== 'basic' || !isAudioAllowed || !audioContext) return; 
 
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
@@ -614,61 +683,65 @@
             oscillator.stop(audioContext.currentTime + duration);
         }
 
-        // Plays audio using MP3 files (Advanced Mode)
         function playAdvancedSound(key) {
-            if (voiceMode !== 'advanced' || !isAudioAllowed) return; // Added isAudioAllowed check
+            if (voiceMode !== 'advanced' || !isAudioAllowed) return; 
 
             const fileName = advancedAudioFiles[key];
             if (!fileName) {
                 console.warn(`Audio file not mapped for key: ${key}`);
                 return;
             }
-            stopCurrentAudio();
-            // Assuming files are available in the root path or 'sounds/'
-            audioPlayer.src = fileName;
-            // The initial play() call is now safe because isAudioAllowed is set on click
-            audioPlayer.play().catch(e => {
+            
+            // FIX: Use a new Audio object for each playback to prevent "interrupted by pause" errors.
+            const audioPlayerLocal = new Audio(fileName); 
+            console.log(`Attempting to play audio from source: ${fileName}`);
+
+            audioPlayerLocal.play().catch(e => {
+                // Ignore benign interruption errors (which can still happen if another sound starts immediately)
+                if (e.name === 'AbortError' || (e.message && e.message.includes('interrupted by a call to pause'))) {
+                     return; 
+                }
+                
                 console.error("Error playing audio:", e);
-                // If the error persists, warn the user they need a specific interaction
-                if (e.name === 'NotAllowedError' && !audioPlayer.wasInteracted) {
+                if (e.name === 'NotAllowedError') {
                     showStatusMessage("Audio playback blocked. Please try clicking the 'Request Direction' button once.");
-                    audioPlayer.wasInteracted = true;
+                } else if (e.name === 'MediaError' || e.message.includes('Failed to load')) {
+                    showStatusMessage(`Failed to load audio for key "${key}". Please ensure the file "${fileName}" exists and is correctly uploaded.`);
                 }
             });
         }
         
-        // Main function to decide which audio to play
         function playAudio(action, value = null) {
-            // Check if sound is explicitly off OR if we haven't received permission yet
             if (voiceMode === 'off' || !isAudioAllowed) {
                 return;
             } else if (voiceMode === 'advanced') {
                 switch(action) {
-                    // Engine sound is only played on user-initiated mode change
                     case 'engine': playAdvancedSound('engine'); break;
                     case 'horn': playAdvancedSound('horn'); break;
                     case 'direction':
                         if (mode === 'junction') {
-                            const directionKey = value.toLowerCase().replace(/\s/g, '');
-                            playAdvancedSound(directionKey);
+                            const directionKey = value.toLowerCase().replace(/\s/g, '').replace(/-/g, '');
+                            if (directionKey.includes('slight')) {
+                                playAdvancedSound(directionKey.includes('left') ? 'left' : 'right');
+                            } else {
+                                playAdvancedSound(directionKey);
+                            }
                         } else if (mode === 'roundabout') {
-                            // value is the exit number (1, 2, 3, etc.)
                             const exitKey = `exit-${value}`;
                             playAdvancedSound(exitKey);
                         }
                         break;
                 }
             } else if (voiceMode === 'basic') {
-                // Basic sounds are simple beeps and tones
                 switch(action) {
                     case 'engine': playBasicSound(200, 0.5, 'square'); break;
-                    case 'horn': playBasicSound(800, 0.1, 'sawtooth'); break; // High pitch, short for interruption
+                    case 'horn': playBasicSound(800, 0.1, 'sawtooth'); break; 
                     case 'direction':
-                        // Different frequency for different turns
-                        let freq = 440; // Default
+                        let freq = 440; 
                         if (mode === 'junction') {
-                            if (value === 'Left' || value.includes('Left')) freq = 300;
-                            else if (value === 'Right' || value.includes('Right')) freq = 600;
+                            if (value === 'Turn Left' || value.includes('Left')) freq = 300;
+                            else if (value === 'Turn Right' || value.includes('Right')) freq = 600;
+                            else if (value === 'U-Turn') freq = 100; 
                         }
                         playBasicSound(freq, 0.4, 'sine');
                         break;
@@ -676,7 +749,7 @@
             }
         }
 
-        // --- TIMER LOGIC ---
+        // --- TIMER LOGIC (Unchanged) ---
 
         function startTimer() {
             if (timerDuration === 0) {
@@ -684,10 +757,9 @@
                 return;
             }
 
-            // Interrupt any existing timer
             clearInterval(timerInterval);
-            stopCurrentAudio(); 
-            
+            // We no longer call stopCurrentAudio here as we use isolated Audio elements
+
             ui.timerBarContainer.classList.remove('hidden');
             timeRemaining = timerDuration;
             timerStartTime = Date.now();
@@ -707,10 +779,8 @@
                     return;
                 }
 
-                // Update bar visual
                 ui.timerBar.style.transform = `translateX(-${100 - percentageRemaining}%)`;
 
-                // Change color when low
                 if (percentageRemaining < 30) {
                     ui.timerBar.style.backgroundColor = '#EF4444'; // Red
                 } else if (percentageRemaining < 60) {
@@ -728,13 +798,25 @@
         function handleTimeout() {
             clearTimer();
             ui.directionText.textContent = "TIME'S UP! 🛑";
-            playAudio('horn'); // Use horn sound for time out
+            playAudio('horn'); 
         }
 
-        // --- MAIN GAME LOGIC ---
+        // --- MAIN GAME LOGIC (Unchanged) ---
 
         function generateJunctionDirection() {
-            const directions = ['Straight Ahead', 'Turn Left', 'Turn Right', 'Slight Left', 'Slight Right', 'U-Turn'];
+            // Weighted probability list to make U-Turns and Slight turns less common.
+            const directionsWeighted = [
+                // High Frequency (4x chance)
+                'Straight Ahead', 'Straight Ahead', 'Straight Ahead', 'Straight Ahead',
+                'Turn Left', 'Turn Left', 'Turn Left', 'Turn Left',
+                'Turn Right', 'Turn Right', 'Turn Right', 'Turn Right',
+                // Medium Frequency (2x chance)
+                'Slight Left', 'Slight Left',
+                'Slight Right', 'Slight Right',
+                // Low Frequency (1x chance)
+                'U-Turn' 
+            ];
+            
             const angles = {
                 'Straight Ahead': 0,
                 'Turn Left': -90,
@@ -746,8 +828,8 @@
 
             let newDirection;
             do {
-                newDirection = directions[Math.floor(Math.random() * directions.length)];
-            } while (newDirection === recentDirections[0]); // Ensure direction changes
+                newDirection = directionsWeighted[Math.floor(Math.random() * directionsWeighted.length)];
+            } while (newDirection === recentDirections[0]); 
 
             recentDirections.unshift(newDirection);
             recentDirections.pop();
@@ -755,10 +837,7 @@
             ui.directionText.textContent = newDirection;
             ui.directionArrow.style.transform = `rotate(${angles[newDirection]}deg)`;
             
-            // Play audio
             playAudio('direction', newDirection);
-            
-            // Start timer if enabled
             startTimer();
 
             return newDirection;
@@ -779,17 +858,13 @@
                 directionText = `Take the ${exitNumber}${exitNumber === 2 ? 'nd' : (exitNumber === 3 ? 'rd' : 'th')} Exit`;
             }
             
-            // Calculate rotation angle (0 is straight/default exit angle)
             let rotationAngle;
             
             if (maxExits === 3) {
-                // Exit 1: -120 deg (Left), Exit 2: 0 deg (Straight), Exit 3: 120 deg (Right)
                 rotationAngle = (exitNumber - 2) * 120;
             } else if (maxExits === 4) {
-                // Simpler angles: 1: -120, 2: 0, 3: 120, 4: 180
                 rotationAngle = { 1: -120, 2: 0, 3: 120, 4: 180 }[exitNumber] || 0;
             } else {
-                // Fallback to simpler left/right mapping
                 if (exitNumber === 1) rotationAngle = -90;
                 else if (exitNumber === 2) rotationAngle = 0;
                 else if (exitNumber >= 3) rotationAngle = 90;
@@ -801,10 +876,7 @@
             ui.directionText.textContent = directionText;
             ui.directionArrow.style.transform = `rotate(${rotationAngle}deg)`;
             
-            // Play audio
             playAudio('direction', exitNumber);
-
-            // Start timer if enabled
             startTimer();
             
             return directionText;
@@ -814,7 +886,6 @@
             const timestamp = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             history.unshift({ time: timestamp, direction: newDirection });
             
-            // Trim history to 5 items
             if (history.length > 5) {
                 history.pop();
             }
@@ -846,7 +917,7 @@
             renderHistory();
         }
 
-        // --- HANDLERS ---
+        // --- HANDLERS (Unchanged) ---
 
         function handleRequestDirection() {
             if (!hasStarted) {
@@ -866,7 +937,6 @@
 
         function handleModeChange(newMode) {
             mode = newMode;
-            // Update active state for buttons
             ui.modeJunction.classList.remove('active-mode');
             ui.modeRoundabout.classList.remove('active-mode');
             
@@ -883,8 +953,6 @@
             if (!hasStarted) {
                 hasStarted = true;
                 ui.appContainer.style.opacity = '1';
-                // NOTE: playAudio('engine') is removed here to prevent the NotAllowedError.
-                // It is implicitly started by the user interaction when isAudioAllowed is set.
             }
             resetGame();
         }
@@ -893,13 +961,11 @@
             const button = event.target.closest('.exit-button');
             if (!button) return;
 
-            // Remove active class from all
             ui.exitButtons.querySelectorAll('.exit-button').forEach(btn => btn.classList.remove('exit-button-active'));
-            // Add active class to clicked button
             button.classList.add('exit-button-active');
             
             exits = parseInt(button.dataset.exits);
-            ui.exitsSelect.value = exits; // Update hidden input
+            ui.exitsSelect.value = exits; 
             resetGame();
         }
         
@@ -907,24 +973,18 @@
             const button = event.target.closest('.difficulty-button');
             if (!button) return;
 
-            // Remove active class from all
             ui.difficultyButtons.querySelectorAll('.difficulty-button').forEach(btn => btn.classList.remove('difficulty-button-active'));
-            // Add active class to clicked button
             button.classList.add('difficulty-button-active');
             
             difficulty = button.dataset.difficulty;
-            ui.difficultySelect.value = difficulty; // Update hidden input
+            ui.difficultySelect.value = difficulty; 
             
-            // Set new duration
             timerDuration = DIFFICULTY_MAP[difficulty];
             
-            // If timer is off, hide the bar immediately
             if (timerDuration === 0) {
                 clearTimer();
             } else if (timerInterval) {
-                // If the game is mid-play, clear and restart the timer with new duration
                 clearInterval(timerInterval);
-                // The next call to handleRequestDirection will restart it
             }
         }
         
@@ -932,15 +992,13 @@
             const button = event.target.closest('.voice-mode-button');
             if (!button) return;
 
-            // Remove active class from all
             ui.voiceModeButtons.querySelectorAll('.voice-mode-button').forEach(btn => btn.classList.remove('voice-mode-button-active'));
-            // Add active class to clicked button
             button.classList.add('voice-mode-button-active');
             
             voiceMode = button.dataset.mode;
             ui.voiceModeSelect.value = voiceMode;
             localStorage.setItem('voiceMode', voiceMode);
-            stopCurrentAudio(); // Stop any currently playing audio if mode changes
+            // No need to call stopCurrentAudio here anymore since we use isolated audio elements
         }
 
         // --- APPEARANCE & SETTINGS ---
@@ -957,6 +1015,9 @@
             isDarkMode = isDark;
             document.body.classList.toggle('dark-mode', isDark);
             localStorage.setItem('darkMode', isDark);
+            
+            // Re-render theme buttons to update their border/shadow color
+            generateThemeButtons();
         }
 
         function changeTheme(themeKey) {
@@ -964,13 +1025,8 @@
             document.body.setAttribute('data-theme', themeKey);
             localStorage.setItem('colorTheme', themeKey);
             
-            // Update selection visuals
-            ui.themeSelectorButtons.querySelectorAll('.theme-select-button').forEach(btn => {
-                btn.classList.remove('selected');
-                if (btn.dataset.theme === themeKey) {
-                    btn.classList.add('selected');
-                }
-            });
+            // Update selection visuals (re-run generation to ensure correct accent border)
+            generateThemeButtons();
         }
         
         function generateThemeButtons() {
@@ -982,7 +1038,7 @@
                 button.dataset.theme = key;
                 button.textContent = colors.name;
                 
-                // Set background color for preview, using the light mode start color for simplicity
+                // Set background color for preview by reading the CSS variable
                 const lightColor = getThemeAccentColor(key); 
                 button.style.backgroundColor = lightColor;
                 
@@ -1024,24 +1080,21 @@
                 btn.classList.toggle('voice-mode-button-active', btn.dataset.mode === voiceMode);
             });
             
-            // Set initial mode to junction. No sound played here.
+            // Set initial mode to junction.
             handleModeChange('junction');
             
-            generateThemeButtons(); // Generate theme buttons after loading theme
+            generateThemeButtons(); 
         }
 
         function setupEventListeners() {
             ui.splashScreen.addEventListener('click', () => {
-                // 1. This is the first user interaction. Initialize audio here.
                 initializeAudioContext();
                 isAudioAllowed = true;
                 
-                // 2. Play initial engine sound if in a sound mode
                 if (voiceMode !== 'off') {
                     playAudio('engine');
                 }
 
-                // 3. Dismiss splash screen
                 ui.splashScreen.style.opacity = '0';
                 setTimeout(() => ui.splashScreen.style.display = 'none', 400);
             });
@@ -1061,7 +1114,6 @@
 
             ui.darkModeToggle.addEventListener('change', (e) => toggleDarkMode(e.target.checked));
             
-            // New Listeners for settings
             ui.difficultyButtons.addEventListener('click', handleDifficultySelection);
             ui.voiceModeButtons.addEventListener('click', handleVoiceModeSelection);
         }
@@ -1092,7 +1144,6 @@
         }
         
         window.onload = function() {
-            // Check if AudioContext is supported early
             if (!(window.AudioContext || window.webkitAudioContext)) {
                 showStatusMessage("Your browser does not fully support Web Audio. Sound features may be limited or unavailable.");
             }
@@ -1100,10 +1151,8 @@
             loadPreferences();
             setupEventListeners();
             initFirebase(); 
-            // Initial opacity is 0, will be set to 1 on first mode selection (hasStarted=true)
         };
         
-        // Expose function for the button outside the module scope
         window.closeSettingsModal = closeSettingsModal;
 
     </script>
