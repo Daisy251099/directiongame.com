@@ -143,7 +143,20 @@
         body.dark-mode .mode-button { background-color: rgba(31, 41, 55, 0.7); color: #D1D5DB; }
         body.dark-mode #settings-button { background-color: var(--theme-secondary); color: var(--theme-accent); }
         body.dark-mode .exit-button { background-color: #4B5563; color: white; }
-        body.dark-mode .exit-button-active { background-color: var(--theme-arrow) !important; color: #1F2937 !important; }
+        
+        /* Highlight for selected exit button (Light Mode) */
+        .exit-button.exit-button-active {
+            background-color: var(--theme-arrow) !important; 
+            color: white !important; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            transform: scale(1.05);
+        }
+        
+        /* Highlight for selected exit button (Dark Mode override) */
+        body.dark-mode .exit-button.exit-button-active { 
+            background-color: var(--theme-arrow) !important; 
+            color: #1F2937 !important; 
+        }
         
         /* Splash Screen (Unchanged, looks great) */
         .splash-screen {
@@ -332,12 +345,12 @@
             <label class="block font-semibold mb-3">Select the number of exits:</label>
             <div id="exit-buttons" class="flex justify-between space-x-2">
                 <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="2">2</button>
-                <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="3">3</button>
-                <button class="exit-button w-1/5 py-2 exit-button-active bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="4">4</button>
+                <button class="exit-button w-1/5 py-2 exit-button-active bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="3">3</button>
+                <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="4">4</button>
                 <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="5">5</button>
                 <button class="exit-button w-1/5 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-exits="6">6</button>
             </div>
-            <input type="hidden" id="exits-select" value="4">
+            <input type="hidden" id="exits-select" value="3">
         </div>
 
         <!-- Main Direction Card -->
@@ -429,20 +442,21 @@
         
         // --- GAME STATE ---
         let mode = 'junction'; // 'junction' or 'roundabout'
-        let exits = 4;
+        let exits = 3; // UPDATED DEFAULT TO 3
         let recentDirections = [null, null]; // [most recent, second most recent]
         let history = [];
         let isSpeaking = false; 
         let hasStarted = false; 
         let colorTheme = 'default'; // Added theme state
         let isDarkMode = false; // Added dark mode state
+        let userId = null; // Will store the authenticated user ID
 
 
         // --- THEME MAPPING (Used for button generation) ---
         const themeColors = {
-            'default': { name: 'Pink/Teal', light: 'bg-pink-500', dark: 'bg-purple-700' },
-            'teal': { name: 'Teal/Green', light: 'bg-cyan-500', dark: 'bg-green-700' },
-            'blue': { name: 'Blue/Yellow', light: 'bg-blue-500', dark: 'bg-yellow-700' },
+            'default': { name: 'Pink/Teal', dark: 'bg-purple-700', light: 'bg-pink-500' },
+            'teal': { name: 'Teal/Green', dark: 'bg-green-700', light: 'bg-cyan-500' },
+            'blue': { name: 'Blue/Yellow', dark: 'bg-yellow-700', light: 'bg-blue-500' },
         };
         
         // Helper to dynamically get the CSS variable-defined accent color for buttons
@@ -545,27 +559,130 @@
              messageBox.style.display = 'flex';
         }
         
+        // --- SYNTHESIZED AUDIO FALLBACK ---
+        
+        // Create audio context lazily on user interaction
+        let audioContext = null;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        function playTone(freq, type, duration, startTime = 0, vol = 0.1) {
+            initAudioContext();
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start(audioContext.currentTime + startTime);
+            osc.stop(audioContext.currentTime + startTime + duration);
+            gain.gain.setValueAtTime(vol, audioContext.currentTime + startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + startTime + duration);
+        }
+
+        const synthEffects = {
+            'engine': () => {
+                initAudioContext();
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sawtooth';
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.frequency.setValueAtTime(80, audioContext.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 1.2);
+                gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1.5);
+                osc.start();
+                osc.stop(audioContext.currentTime + 1.5);
+            },
+            'horn': () => {
+                playTone(250, 'sawtooth', 0.4, 0, 0.2);
+                playTone(300, 'sawtooth', 0.4, 0, 0.2);
+            },
+            'left': () => {
+                playTone(400, 'sine', 0.15, 0);
+                playTone(600, 'sine', 0.3, 0.15);
+            },
+            'right': () => {
+                playTone(600, 'sine', 0.15, 0);
+                playTone(400, 'sine', 0.3, 0.15);
+            },
+            'straight': () => {
+                playTone(500, 'sine', 0.4);
+            },
+            'u-turn': () => {
+                playTone(300, 'sine', 0.1);
+                playTone(300, 'sine', 0.1, 0.15);
+                playTone(600, 'sine', 0.3, 0.3);
+            },
+            'exit': (num) => {
+                for(let i=0; i<num; i++) {
+                    playTone(800, 'triangle', 0.1, i * 0.12, 0.05);
+                }
+            }
+        };
+
+        function playSynthesizedSound(key) {
+            // Check specific keys first
+            if (synthEffects[key]) {
+                synthEffects[key]();
+                return;
+            }
+            
+            // Handle parameterized keys
+            if (key.startsWith('exit-')) {
+                const num = parseInt(key.split('-')[1]);
+                synthEffects['exit'](num);
+                return;
+            }
+            
+            // Fallback
+            playTone(440, 'sine', 0.1);
+        }
+
+        /**
+         * Plays audio using the provided key. Falls back to synthesis on error.
+         */
         function playAudio(key) {
-            if (!audioFiles[key]) return Promise.resolve();
             const audioUrl = audioFiles[key];
+            if (!audioUrl) {
+                // No file defined? Fallback directly.
+                console.log(`No audio file for ${key}, using synth.`);
+                playSynthesizedSound(key);
+                return Promise.resolve();
+            }
+
             try {
                 const audio = new Audio(audioUrl);
                 
                 return new Promise((resolve) => {
                     audio.onended = () => resolve();
+                    
+                    // ON ERROR: Fallback to synth
                     audio.onerror = (e) => {
-                        console.error(`Audio Load Error on file: ${audioUrl}`, e);
+                        console.warn(`Audio Load Error for ${audioUrl}. Playing synth fallback.`);
+                        playSynthesizedSound(key);
                         resolve();
                     };
                     
                     audio.play().then(() => {
+                        // Success
                     }).catch(e => {
-                        console.warn(`Audio playback blocked/failed for ${audioUrl}.`, e); 
+                        console.warn(`Audio playback blocked/failed for ${audioUrl}. Playing synth fallback.`); 
+                        playSynthesizedSound(key);
                         resolve();
                     });
                 });
             } catch (error) {
-                console.error(`Critical error creating Audio object for ${audioUrl}:`, error);
+                console.error(`Critical error creating Audio object. Using synth.`);
+                playSynthesizedSound(key);
                 return Promise.resolve();
             }
         }
@@ -578,7 +695,7 @@
             const simpleDir = direction.toLowerCase();
 
             if (simpleDir.includes('u-turn')) {
-                // No specific U-turn audio provided
+                audioKey = 'u-turn';
             } else if (simpleDir.includes('left')) {
                 audioKey = 'left';
             } else if (simpleDir.includes('right')) {
@@ -589,7 +706,9 @@
                 const num = parseInt(simpleDir.match(/\d+/)?.[0], 10);
                 if (num >= 1 && num <= 5) {
                     audioKey = `exit-${num}`;
-                } 
+                } else {
+                    audioKey = `exit-${num || 5}`; // Fallback synth supports any number
+                }
             }
 
             if (audioKey) {
@@ -618,37 +737,25 @@
             return '•';
         }
 
-        /**
-         * Generates a direction for the Junction mode with a 1 in 50 chance for U-turn.
-         * Ensures no direction is repeated three times consecutively.
-         */
         function getJunctionDirection() {
             const uTurnOption = 'Make a U-turn';
             const standardOptions = ['Turn left', 'Go straight', 'Turn right'];
             const [mostRecent, secondRecent] = recentDirections;
 
-            // Helper to check for the triple-repeat forbidden sequence
             const isForbidden = (direction) => mostRecent === direction && secondRecent === direction;
 
-            // 1. U-turn Check: 1 in 50 chance (2%)
             if (Math.random() < 0.02) {
                 if (!isForbidden(uTurnOption)) {
-                    return uTurnOption; // U-turn successfully generated
+                    return uTurnOption; 
                 }
-                // If U-turn was selected but is forbidden, we fall through to standard selection.
             }
 
-            // 2. Standard Selection (98% of the time, or if U-turn was forbidden)
-            
-            // Filter out any standard direction that would cause a triple-repeat
             let availableOptions = standardOptions.filter(opt => !isForbidden(opt));
 
-            // Should not happen, but a safe guard
             if (availableOptions.length === 0) {
                  availableOptions = standardOptions; 
             }
 
-            // Select a random direction from the available, non-forbidden options
             const newDirection = availableOptions[Math.floor(Math.random() * availableOptions.length)];
             return newDirection;
         }
@@ -761,32 +868,37 @@
         }
 
         function updateExitSelection(newExits) {
-            exits = newExits;
-            ui.exitsSelect.value = newExits; 
+            exits = parseInt(newExits, 10);
+            ui.exitsSelect.value = exits; 
             
             ui.exitButtons.forEach(button => {
                 button.classList.remove('exit-button-active');
-                if (parseInt(button.dataset.exits, 10) === newExits) {
+                if (parseInt(button.dataset.exits, 10) === exits) {
                     button.classList.add('exit-button-active');
                 }
             });
-            newGame();
+            // NO RESET: Removed newGame() call to keep session alive
         }
 
         function setMode(newMode) {
+            if (mode === newMode) return;
             mode = newMode;
+            
             ui.modeJunction.classList.remove('active-mode');
             ui.modeRoundabout.classList.remove('active-mode');
             ui.roundaboutSettings.classList.add('hidden');
 
             if (mode === 'junction') {
                 ui.modeJunction.classList.add('active-mode');
+                ui.directionText.textContent = "Junction Mode Active";
             } else {
                 ui.modeRoundabout.classList.add('active-mode');
                 ui.roundaboutSettings.classList.remove('hidden');
+                ui.directionText.textContent = `Roundabout Mode Active`;
+                // Ensure correct exit button is highlighted when entering Roundabout mode
                 updateExitSelection(exits); 
             }
-            newGame();
+            // NO RESET: Removed newGame() call
         }
 
         function newGame() {
@@ -884,11 +996,14 @@
             loadSettings();
             
             // 2. Initial Game Setup
-            setMode('junction');
+            // Ensure the initial mode is set, which calls updateExitSelection(exits=3)
+            setMode('junction'); 
         };
 
         // 3. Event Listeners
+        // FIX: Moved audio and state change directly here for immediate user-initiated action.
         ui.splashScreen.addEventListener('click', dismissSplashScreen);
+        
         ui.settingsButton.addEventListener('click', openSettingsModal); // Open Modal
         
         ui.modeJunction.addEventListener('click', () => setMode('junction'));
