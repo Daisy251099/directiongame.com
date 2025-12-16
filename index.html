@@ -10,19 +10,19 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         
-        /* --- THEME VARIABLE DEFINITIONS (6 Schemes: Default, Teal, Blue, Trans, Non-Binary, Pan) --- */
+        /* --- THEME VARIABLE DEFINITIONS (6 Schemes) --- */
 
-        /* 1. DEFAULT (Pink / Teal) - Light Mode */
+        /* 1. DEFAULT (Pink / Purple) - Light Mode */
         :root, body[data-theme="default"]:not(.dark-mode) {
             --theme-bg-start: #A855F7; /* Purple */
             --theme-bg-end: #14B8A6; /* Teal */
             --theme-card-bg: white;
             --theme-text: #1F2937;
-            --theme-accent: #EC4899; /* Pink (Main button color) */
-            --theme-arrow: #14B8A6; /* Teal (Arrow color) */
-            --theme-secondary: #F3F4F6; /* Gray-100 (Secondary background) */
+            --theme-accent: #EC4899; /* Pink */
+            --theme-arrow: #14B8A6; /* Teal */
+            --theme-secondary: #F3F4F6; /* Gray-100 */
         }
-        /* 1. DEFAULT (Pink / Teal) - Dark Mode */
+        /* 1. DEFAULT (Pink / Purple) - Dark Mode */
         body[data-theme="default"].dark-mode {
             --theme-bg-start: #4C1D95; /* Deep Purple */
             --theme-bg-end: #064E3B; /* Deep Green */
@@ -75,24 +75,22 @@
             --theme-secondary: #374151;
         }
         
-        /* --- FLAG THEMES --- */
-        
         /* 4. TRANSGENDER PRIDE (`trans`) - Light Mode */
         body[data-theme="trans"]:not(.dark-mode) {
             --theme-bg-start: #5BCEFA; /* Light Blue */
             --theme-bg-end: #F5A9B8; /* Pink */
             --theme-card-bg: white;
             --theme-text: #1F2937;
-            --theme-accent: #F5A9B8; /* Pink (Main button color) */
-            --theme-arrow: #5BCEFA; /* Light Blue (Arrow color) */
-            --theme-secondary: #F0F0F0; /* Off-White/White */
+            --theme-accent: #F5A9B8; /* Pink */
+            --theme-arrow: #5BCEFA; /* Light Blue */
+            --theme-secondary: #F0F0F0;
         }
         /* 4. TRANSGENDER PRIDE (`trans`) - Dark Mode */
         body[data-theme="trans"].dark-mode {
             --theme-bg-start: #0A7DC3; /* Darker Blue */
             --theme-bg-end: #CC5E78; /* Darker Pink */
             --theme-card-bg: #1F2937;
-            --theme-text: #FFFFFF; /* Pure White Text */
+            --theme-text: #FFFFFF;
             --theme-accent: #F5A9B8; /* Pink */
             --theme-arrow: #5BCEFA; /* Light Blue */
             --theme-secondary: #374151;
@@ -140,7 +138,7 @@
             --theme-secondary: #374151;
         }
 
-        /* --- BASE STYLES APPLIED VIA VARIABLES (Unchanged) --- */
+        /* --- BASE STYLES APPLIED VIA VARIABLES --- */
         body {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
@@ -182,6 +180,14 @@
             box-shadow: 0 10px 15px -3px var(--theme-accent);
         }
         
+        /* Stuck Button (Red/Danger) */
+        #stuck-button {
+            background-color: #EF4444; /* Red-500 */
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #stuck-button:hover { background-color: #DC2626; /* Red-600 */ }
+        
         /* Mode/Exit Buttons */
         .mode-button { 
             background-color: rgba(255, 255, 255, 0.3); 
@@ -193,8 +199,8 @@
             color: white !important;
         }
         
-        /* Settings/Reset Buttons */
-        #settings-button { 
+        /* Settings/Reset/Leaderboard Buttons */
+        #settings-button, #leaderboard-button { 
             background-color: var(--theme-card-bg); 
             color: var(--theme-accent);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -204,48 +210,26 @@
             color: var(--theme-text); 
         }
         
-        /* Dark Mode overrides for secondary elements */
+        /* Dark Mode overrides */
         body.dark-mode .mode-button { background-color: rgba(31, 41, 55, 0.7); color: #D1D5DB; }
-        body.dark-mode #settings-button { background-color: var(--theme-secondary); color: var(--theme-accent); }
-        body.dark-mode .exit-button, body.dark-mode .difficulty-button, body.dark-mode .voice-mode-button { background-color: #4B5563; color: white; }
+        body.dark-mode #settings-button, body.dark-mode #leaderboard-button { background-color: var(--theme-secondary); color: var(--theme-accent); }
+        body.dark-mode .exit-button, body.dark-mode .voice-mode-button { background-color: #4B5563; color: white; }
         
-        /* Highlight for selected exit/difficulty/voice button */
+        /* Highlight for selected exit/voice button */
         .exit-button.exit-button-active, 
-        .difficulty-button.difficulty-button-active,
         .voice-mode-button.voice-mode-button-active {
             background-color: var(--theme-arrow) !important; 
             color: white !important; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2p x rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
             transform: scale(1.05);
         }
-        
-        /* Highlight for selected exit/difficulty/voice button (Dark Mode override) */
         body.dark-mode .exit-button.exit-button-active, 
-        body.dark-mode .difficulty-button.difficulty-mode-button-active,
         body.dark-mode .voice-mode-button.voice-mode-button-active { 
             background-color: var(--theme-arrow) !important; 
             color: #1F2937 !important; 
         }
         
-        /* Timer Bar Styles */
-        #timer-bar-container {
-            width: 90%;
-            height: 12px;
-            margin: 0 auto 1.5rem;
-            background-color: var(--theme-secondary);
-            border-radius: 9999px;
-            overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        #timer-bar {
-            height: 100%;
-            width: 100%;
-            background-color: var(--theme-accent);
-            transform: translateX(0%);
-            transition: transform 0.1s linear; /* Smooth visual update */
-        }
-
-        /* Splash Screen (Unchanged, looks great) */
+        /* Splash Screen */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -266,7 +250,7 @@
             transition: opacity 0.4s ease;
         }
         .splash-screen-content {
-            position: relative; /* Added to keep z-index layer for button shadow */
+            position: relative; 
             background-color: rgba(255, 255, 255, 0.15);
             padding: 2.5rem 1.5rem;
             border-radius: 2rem;
@@ -313,7 +297,7 @@
         }
         
         /* --- MODAL STYLES --- */
-        .settings-modal-overlay {
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -325,12 +309,12 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
-        .settings-modal-overlay.open {
+        .modal-overlay.open {
             opacity: 1;
             pointer-events: auto;
         }
         
-        .settings-panel {
+        .slide-panel {
             position: fixed;
             bottom: 0;
             left: 0;
@@ -342,12 +326,12 @@
             border-top-left-radius: 2rem;
             border-top-right-radius: 2rem;
         }
-        .settings-modal-overlay.open .settings-panel {
+        .modal-overlay.open .slide-panel {
             transform: translateY(0);
         }
         
         @media (min-width: 640px) {
-            .settings-panel {
+            .slide-panel {
                 width: 400px;
                 right: 0;
                 left: auto;
@@ -359,7 +343,7 @@
                 transform: translateX(100%);
                 transition: transform 0.4s ease-out;
             }
-            .settings-modal-overlay.open .settings-panel {
+            .modal-overlay.open .slide-panel {
                 transform: translateX(0);
             }
         }
@@ -370,12 +354,17 @@
             right: 1rem;
             z-index: 40;
         }
+        #leaderboard-button {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 40;
+        }
         
         /* Theme Selection Button Styling */
         .theme-select-button {
             transition: transform 0.1s ease, box-shadow 0.2s ease;
             color: white !important; /* Ensure text is visible on colored buttons */
-            /* Force white text on light themes where the button color is light */
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); 
         }
         .theme-select-button:hover {
@@ -403,11 +392,17 @@
             
             <div class="instructions-header">HOW TO PLAY:</div>
             <div class="instruction-item">1. **Tap Request** for your driving command.</div>
-            <div class="instruction-item">2. Check the **arrow** for the precise turn angle.</div>
-            <div class="instruction-item">3. Use the **gear icon** ⚙️ for mode changes and settings.</div>
+            <div class="instruction-item">2. **Stuck?** Tap "I'm Stuck" to end your run and save score.</div>
+            <div class="instruction-item">3. Use the **gear icon** ⚙️ for mode changes.</div>
             <div class="click-to-start">TAP ANYWHERE TO START YOUR ENGINE!</div>
         </div>
     </div> <!-- Splash Screen End -->
+
+    <!-- Leaderboard Button (Fixed, Top Left) -->
+    <button id="leaderboard-button" class="p-3 rounded-full hover:opacity-80 transition duration-150">
+        <!-- Trophy Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+    </button>
 
     <!-- Settings Button (Fixed, Top Right) -->
     <button id="settings-button" class="p-3 rounded-full hover:opacity-80 transition duration-150">
@@ -420,8 +415,8 @@
     <!-- Main App Content -->
     <div id="app" class="w-full max-w-xl opacity-0 transition-opacity duration-500">
         
-        <!-- Mode Selector (Stacked on Mobile, Row on Desktop) -->
-        <div class="mode-selector mb-6 flex flex-col gap-4 sm:flex-row">
+        <!-- Mode Selector -->
+        <div class="mode-selector mb-6 flex flex-col gap-4 sm:flex-row mt-12">
             <button id="mode-junction" class="mode-button flex-1 py-3 px-6 font-bold rounded-2xl shadow-lg transition duration-200 hover:opacity-70" data-mode="junction">
                 🚗 At Junction
             </button>
@@ -445,12 +440,6 @@
 
         <!-- Main Direction Card -->
         <div id="direction-card" class="card text-center mb-6 p-6">
-            
-            <!-- Timer Bar -->
-            <div id="timer-bar-container" class="hidden">
-                <div id="timer-bar" style="transform: translateX(0%);"></div>
-            </div>
-
             <p id="direction-text" class="text-3xl sm:text-4xl font-extrabold my-4 h-12 flex items-center justify-center">
                 Start Your Engine!
             </p>
@@ -461,12 +450,29 @@
                 </svg>
             </div>
 
-            <!-- Main Action Button (Larger for Mobile Touch) -->
+            <!-- Main Action Button -->
             <button id="request-direction" class="w-full py-5 mt-4 text-white font-black text-2xl rounded-2xl shadow-xl transition duration-200 hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-4" style="--tw-ring-color: var(--theme-accent);">
                 🎯 Request Direction
             </button>
+            
+            <!-- STUCK BUTTON -->
+            <button id="stuck-button" class="w-full py-3 mt-3 font-bold text-lg rounded-xl shadow-lg transition duration-200 active:scale-[0.98] focus:outline-none focus:ring-4 ring-red-300">
+                I'm Stuck / End Run
+            </button>
         </div>
         
+        <!-- Score and Level -->
+        <div class="flex justify-between items-center mb-4 px-2">
+             <div class="bg-white/80 dark:bg-black/40 rounded-lg px-4 py-2 shadow-sm border border-gray-200 dark:border-gray-600">
+                <span class="text-sm font-bold uppercase text-gray-500 dark:text-gray-400">Score</span>
+                <div id="score-display" class="text-2xl font-black text-gray-800 dark:text-white">0</div>
+             </div>
+             <div class="bg-white/80 dark:bg-black/40 rounded-lg px-4 py-2 shadow-sm border border-gray-200 dark:border-gray-600">
+                <span class="text-sm font-bold uppercase text-gray-500 dark:text-gray-400">Moves</span>
+                <div id="moves-display" class="text-2xl font-black" style="color: var(--theme-arrow)">0</div>
+             </div>
+        </div>
+
         <!-- Recent Directions History -->
         <div class="card p-4">
             <h2 class="text-xl font-bold mb-3 border-b pb-2">Recent Directions</h2>
@@ -475,38 +481,28 @@
             </ul>
         </div>
 
-        <!-- Status Message Box (Replaced alert()) -->
+        <!-- Status Message Box -->
         <div id="status-message" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center p-4 z-50">
             <div class="card p-6 text-center max-w-sm">
                 <p id="status-text" class="text-xl font-semibold mb-4"></p>
-                <button onclick="document.getElementById('status-message').style.display='none'" class="bg-pink-500 text-white py-2 px-6 rounded-full font-bold hover:bg-pink-600 transition">OK</button>
+                <button id="status-ok-button" class="bg-pink-500 text-white py-2 px-6 rounded-full font-bold hover:bg-pink-600 transition">OK</button>
             </div>
         </div>
         
-        <!-- Settings Modal/Panel -->
-        <div id="settings-modal-overlay" class="settings-modal-overlay" onclick="closeSettingsModal()">
-            <div id="settings-panel" class="settings-panel card p-6 overflow-y-auto" onclick="event.stopPropagation()">
+        <!-- Settings Modal -->
+        <div id="settings-modal-overlay" class="modal-overlay">
+            <div id="settings-panel" class="slide-panel card p-6 overflow-y-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold">Game Settings</h2>
-                    <button class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" onclick="closeSettingsModal()">
+                    <button id="close-settings-x" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
                 
                 <!-- Reset Button -->
                 <button id="reset-game" class="reset-button w-full py-3 mb-6 font-semibold rounded-2xl shadow-md transition duration-200 hover:opacity-80 active:scale-[0.98]">
-                    🔄 Reset Game
+                    🔄 Reset Game Data
                 </button>
-
-                <!-- Difficulty/Timer Settings -->
-                <p class="font-bold border-t pt-4 border-gray-100 dark:border-gray-700">Challenge Level (Timer)</p>
-                <div id="difficulty-buttons" class="flex justify-between space-x-2 mt-3 mb-6">
-                    <button class="difficulty-button flex-1 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-difficulty="easy">Easy</button>
-                    <button class="difficulty-button flex-1 py-2 difficulty-button-active bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-difficulty="medium">Medium</button>
-                    <button class="difficulty-button flex-1 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-difficulty="hard">Hard</button>
-                    <button class="difficulty-button flex-1 py-2 bg-gray-100 font-bold rounded-xl transition duration-150 hover:opacity-80" data-difficulty="off">Off</button>
-                </div>
-                <input type="hidden" id="difficulty-select" value="medium">
 
                 <!-- Audio Settings -->
                 <p class="font-bold border-t pt-4 border-gray-100 dark:border-gray-700">Audio Mode</p>
@@ -530,12 +526,32 @@
             </div>
         </div>
 
+        <!-- Leaderboard Modal -->
+        <div id="leaderboard-modal-overlay" class="modal-overlay">
+            <div id="leaderboard-panel" class="slide-panel card p-6 overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold flex items-center gap-2">🏆 Leaderboard <span class="text-sm font-normal opacity-70">(Top 10 Runs)</span></h2>
+                    <button id="close-leaderboard-x" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                
+                <ul id="leaderboard-list" class="space-y-2">
+                    <li class="italic text-gray-500 text-center">Loading scores...</li>
+                </ul>
+                
+                <div class="mt-6 text-center text-sm text-gray-400">
+                    Scores represent total moves completed before getting stuck.
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         // --- FIREBASE GLOBALS ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -552,40 +568,27 @@
         let isDarkMode = false; 
         let userId = null; 
         let isAudioAllowed = false; 
-
-        // --- TIMER STATE ---
-        let difficulty = 'medium'; 
-        let timerDuration = 4000; 
-        let timerInterval = null;
-        let timeRemaining = 0;
-        let timerStartTime = 0;
-        const TIMER_STEPS = 50; 
-
-        const DIFFICULTY_MAP = {
-            'easy': 6000, 
-            'medium': 4000,
-            'hard': 2500,
-            'off': 0
-        };
+        let currentRunMoves = 0; 
 
         // --- AUDIO STATE ---
         let voiceMode = 'advanced'; 
         let audioContext = null;
-        // NOTE: The global audioPlayer has been removed to fix the "interrupted by pause" error.
 
         // --- AUDIO FILE MAPPING ---
+        const RAW_GITHUB_BASE_URL = "https://raw.githubusercontent.com/Daisy251099/directiongame.com/main/sounds/";
+
         const advancedAudioFiles = {
-            'engine': 'engine-start.mp3',
-            'horn': 'beep.mp3', 
-            'straight': 'gps-straight.mp3',
-            'left': 'gps-left.mp3',
-            'right': 'gps-right.mp3',
-            'exit-1': 'gps-exit-1.mp3',
-            'exit-2': 'gps-exit-2.mp3',
-            'exit-3': 'gps-exit-3.mp3',
-            'exit-4': 'gps-exit-4.mp3',
-            'exit-5': 'gps-exit-5.mp3',
-            'exit-6': 'gps-exit-5.mp3' // Reuses exit-5.mp3
+            'engine': RAW_GITHUB_BASE_URL + 'engine-start.mp3',
+            'horn': RAW_GITHUB_BASE_URL + 'beep.mp3', 
+            'straight': RAW_GITHUB_BASE_URL + 'gps-straight.mp3',
+            'left': RAW_GITHUB_BASE_URL + 'gps-left.mp3',
+            'right': RAW_GITHUB_BASE_URL + 'gps-right.mp3',
+            'exit-1': RAW_GITHUB_BASE_URL + 'gps-exit-1.mp3',
+            'exit-2': RAW_GITHUB_BASE_URL + 'gps-exit-2.mp3',
+            'exit-3': RAW_GITHUB_BASE_URL + 'gps-exit-3.mp3',
+            'exit-4': RAW_GITHUB_BASE_URL + 'gps-exit-4.mp3',
+            'exit-5': RAW_GITHUB_BASE_URL + 'gps-exit-5.mp3',
+            'exit-6': RAW_GITHUB_BASE_URL + 'gps-exit-5.mp3' 
         };
 
         // --- THEME MAPPING ---
@@ -593,7 +596,6 @@
             'default': { name: 'Pink/Teal', dark: 'bg-purple-700', light: 'bg-pink-500' },
             'teal': { name: 'Teal/Green', dark: 'bg-green-700', light: 'bg-cyan-500' },
             'blue': { name: 'Blue/Yellow', dark: 'bg-yellow-700', light: 'bg-blue-500' },
-            // New Themes
             'trans': { name: 'Trans Pride', dark: 'bg-blue-700', light: 'bg-pink-300' },
             'nonbinary': { name: 'Non-Binary Pride', dark: 'bg-purple-700', light: 'bg-yellow-300' },
             'pan': { name: 'Pansexual Pride', dark: 'bg-pink-700', light: 'bg-blue-300' },
@@ -604,38 +606,66 @@
             splashScreen: document.getElementById('splashScreen'),
             appContainer: document.getElementById('app'),
             settingsButton: document.getElementById('settings-button'),
+            leaderboardButton: document.getElementById('leaderboard-button'),
             settingsModalOverlay: document.getElementById('settings-modal-overlay'),
+            leaderboardModalOverlay: document.getElementById('leaderboard-modal-overlay'),
+            leaderboardList: document.getElementById('leaderboard-list'),
+            closeSettingsX: document.getElementById('close-settings-x'),
+            closeLeaderboardX: document.getElementById('close-leaderboard-x'),
             modeJunction: document.getElementById('mode-junction'),
             modeRoundabout: document.getElementById('mode-roundabout'),
             roundaboutSettings: document.getElementById('roundabout-settings'),
             exitsSelect: document.getElementById('exits-select'),
             exitButtons: document.getElementById('exit-buttons'),
             requestDirection: document.getElementById('request-direction'),
+            stuckButton: document.getElementById('stuck-button'), 
             directionText: document.getElementById('direction-text'),
             directionArrow: document.getElementById('direction-arrow'),
             historyList: document.getElementById('history-list'),
             statusMessage: document.getElementById('status-message'),
             statusText: document.getElementById('status-text'),
+            statusOkButton: document.getElementById('status-ok-button'),
             darkModeToggle: document.getElementById('dark-mode-toggle'),
             themeSelectorButtons: document.getElementById('theme-selector-buttons'),
             resetGameButton: document.getElementById('reset-game'),
-            timerBarContainer: document.getElementById('timer-bar-container'),
-            timerBar: document.getElementById('timer-bar'),
-            difficultyButtons: document.getElementById('difficulty-buttons'),
-            difficultySelect: document.getElementById('difficulty-select'),
             voiceModeButtons: document.getElementById('voice-mode-buttons'),
-            voiceModeSelect: document.getElementById('voice-mode-select')
+            voiceModeSelect: document.getElementById('voice-mode-select'),
+            scoreDisplay: document.getElementById('score-display'),
+            movesDisplay: document.getElementById('moves-display') 
         };
+
+        // --- FIREBASE & AUTH INITIALIZATION ---
+        let db, auth;
+
+        if (firebaseConfig) {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            async function initializeAuth() {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    userId = auth.currentUser?.uid;
+                    console.log("Firebase initialized. User ID:", userId);
+                } catch (error) {
+                    console.error("Firebase Auth Error:", error);
+                    showStatusMessage(`Error signing in: ${error.message}`);
+                }
+            }
+            initializeAuth();
+        } 
         
         // --- UTILITY FUNCTIONS ---
         
-        // Helper to get color from CSS variables defined in the style block
         function getThemeAccentColor(themeKey) {
             const tempDiv = document.createElement('div');
             tempDiv.setAttribute('data-theme', themeKey);
             if (document.body) document.body.appendChild(tempDiv);
             if (isDarkMode) { tempDiv.classList.add('dark-mode'); }
-            // Always try to pull the main button color for the preview button
             const color = getComputedStyle(tempDiv).getPropertyValue('--theme-accent').trim();
             if (document.body) document.body.removeChild(tempDiv);
             return color;
@@ -645,11 +675,22 @@
             ui.statusText.textContent = message;
             ui.statusMessage.style.display = 'flex';
         }
+        
+        function closeStatusMessage() {
+            ui.statusMessage.style.display = 'none';
+        }
+        
+        // --- MODAL FUNCTIONS (Global scope not required with listener binding) ---
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+        function openModal(modalId) {
+             document.getElementById(modalId).classList.add('open');
+        }
+
 
         // --- AUDIO FUNCTIONS ---
 
-        // NOTE: stopCurrentAudio is no longer used for playAdvancedSound, as we now use a local Audio element for each sound.
-        // It remains here to support playBasicSound if needed, though basic sound logic is simple enough not to require it.
         function stopCurrentAudio(audioElement) {
             if (audioElement && !audioElement.paused) {
                 audioElement.pause();
@@ -660,7 +701,6 @@
         function initializeAudioContext() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                console.log("Audio Context Initialized.");
             }
         }
 
@@ -686,18 +726,14 @@
         function playAdvancedSound(key) {
             if (voiceMode !== 'advanced' || !isAudioAllowed) return; 
 
-            const fileName = advancedAudioFiles[key];
-            if (!fileName) {
-                console.warn(`Audio file not mapped for key: ${key}`);
+            const audioUrl = advancedAudioFiles[key];
+            if (!audioUrl) {
+                console.warn(`Audio URL not mapped for key: ${key}`);
                 return;
             }
             
-            // FIX: Use a new Audio object for each playback to prevent "interrupted by pause" errors.
-            const audioPlayerLocal = new Audio(fileName); 
-            console.log(`Attempting to play audio from source: ${fileName}`);
-
+            const audioPlayerLocal = new Audio(audioUrl); 
             audioPlayerLocal.play().catch(e => {
-                // Ignore benign interruption errors (which can still happen if another sound starts immediately)
                 if (e.name === 'AbortError' || (e.message && e.message.includes('interrupted by a call to pause'))) {
                      return; 
                 }
@@ -706,7 +742,7 @@
                 if (e.name === 'NotAllowedError') {
                     showStatusMessage("Audio playback blocked. Please try clicking the 'Request Direction' button once.");
                 } else if (e.name === 'MediaError' || e.message.includes('Failed to load')) {
-                    showStatusMessage(`Failed to load audio for key "${key}". Please ensure the file "${fileName}" exists and is correctly uploaded.`);
+                    showStatusMessage(`Failed to load audio for key "${key}".`);
                 }
             });
         }
@@ -723,8 +759,12 @@
                             const directionKey = value.toLowerCase().replace(/\s/g, '').replace(/-/g, '');
                             if (directionKey.includes('slight')) {
                                 playAdvancedSound(directionKey.includes('left') ? 'left' : 'right');
-                            } else {
-                                playAdvancedSound(directionKey);
+                            } else if (directionKey.includes('straight')) {
+                                playAdvancedSound('straight');
+                            } else if (directionKey.includes('left')) {
+                                playAdvancedSound('left');
+                            } else if (directionKey.includes('right')) {
+                                playAdvancedSound('right');
                             }
                         } else if (mode === 'roundabout') {
                             const exitKey = `exit-${value}`;
@@ -739,8 +779,8 @@
                     case 'direction':
                         let freq = 440; 
                         if (mode === 'junction') {
-                            if (value === 'Turn Left' || value.includes('Left')) freq = 300;
-                            else if (value === 'Turn Right' || value.includes('Right')) freq = 600;
+                            if (value === 'Turn Left') freq = 300;
+                            else if (value === 'Turn Right') freq = 600;
                             else if (value === 'U-Turn') freq = 100; 
                         }
                         playBasicSound(freq, 0.4, 'sine');
@@ -749,97 +789,28 @@
             }
         }
 
-        // --- TIMER LOGIC (Unchanged) ---
 
-        function startTimer() {
-            if (timerDuration === 0) {
-                ui.timerBarContainer.classList.add('hidden');
-                return;
-            }
-
-            clearInterval(timerInterval);
-            // We no longer call stopCurrentAudio here as we use isolated Audio elements
-
-            ui.timerBarContainer.classList.remove('hidden');
-            timeRemaining = timerDuration;
-            timerStartTime = Date.now();
-
-            ui.timerBar.style.backgroundColor = 'var(--theme-accent)';
-            ui.timerBar.style.transform = 'translateX(0%)';
-
-            timerInterval = setInterval(() => {
-                const elapsedTime = Date.now() - timerStartTime;
-                timeRemaining = timerDuration - elapsedTime;
-                
-                const percentageRemaining = (timeRemaining / timerDuration) * 100;
-
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeout();
-                    return;
-                }
-
-                ui.timerBar.style.transform = `translateX(-${100 - percentageRemaining}%)`;
-
-                if (percentageRemaining < 30) {
-                    ui.timerBar.style.backgroundColor = '#EF4444'; // Red
-                } else if (percentageRemaining < 60) {
-                    ui.timerBar.style.backgroundColor = '#F59E0B'; // Amber
-                }
-
-            }, TIMER_STEPS);
-        }
-
-        function clearTimer() {
-            clearInterval(timerInterval);
-            ui.timerBarContainer.classList.add('hidden');
-        }
-
-        function handleTimeout() {
-            clearTimer();
-            ui.directionText.textContent = "TIME'S UP! 🛑";
-            playAudio('horn'); 
-        }
-
-        // --- MAIN GAME LOGIC (Unchanged) ---
+        // --- MAIN GAME LOGIC ---
 
         function generateJunctionDirection() {
-            // Weighted probability list to make U-Turns and Slight turns less common.
-            const directionsWeighted = [
-                // High Frequency (4x chance)
-                'Straight Ahead', 'Straight Ahead', 'Straight Ahead', 'Straight Ahead',
-                'Turn Left', 'Turn Left', 'Turn Left', 'Turn Left',
-                'Turn Right', 'Turn Right', 'Turn Right', 'Turn Right',
-                // Medium Frequency (2x chance)
-                'Slight Left', 'Slight Left',
-                'Slight Right', 'Slight Right',
-                // Low Frequency (1x chance)
-                'U-Turn' 
-            ];
-            
-            const angles = {
-                'Straight Ahead': 0,
-                'Turn Left': -90,
-                'Turn Right': 90,
-                'Slight Left': -45,
-                'Slight Right': 45,
-                'U-Turn': 180
-            };
+            const uTurnOption = 'U-Turn';
+            const standardOptions = ['Straight Ahead', 'Turn Left', 'Turn Right'];
+            const [mostRecent, secondRecent] = recentDirections;
 
-            let newDirection;
-            do {
-                newDirection = directionsWeighted[Math.floor(Math.random() * directionsWeighted.length)];
-            } while (newDirection === recentDirections[0]); 
+            const isForbidden = (direction) => mostRecent === direction && secondRecent === direction;
 
-            recentDirections.unshift(newDirection);
-            recentDirections.pop();
+            // 1 in 50 odds (2%) for U-Turn
+            if (Math.random() < 0.02) {
+                if (!isForbidden(uTurnOption)) {
+                    return uTurnOption; 
+                }
+            }
 
-            ui.directionText.textContent = newDirection;
-            ui.directionArrow.style.transform = `rotate(${angles[newDirection]}deg)`;
-            
-            playAudio('direction', newDirection);
-            startTimer();
+            // Fallback to standard options
+            let availableOptions = standardOptions.filter(opt => !isForbidden(opt));
+            if (availableOptions.length === 0) availableOptions = standardOptions;
 
+            const newDirection = availableOptions[Math.floor(Math.random() * availableOptions.length)];
             return newDirection;
         }
 
@@ -847,40 +818,156 @@
             const maxExits = parseInt(ui.exitsSelect.value);
             const exitNumber = Math.floor(Math.random() * maxExits) + 1;
             
-            let directionText;
-            if (exitNumber === 1) {
-                directionText = `Take the 1st Exit (Left)`;
-            } else if (exitNumber === maxExits && maxExits > 2) {
-                directionText = `Take the ${exitNumber}th Exit (Right)`;
-            } else if (exitNumber === 2 && maxExits === 2) {
-                directionText = `Take the 2nd Exit (Straight)`;
+            let directionText = `Take the ${exitNumber}${exitNumber === 1 ? 'st' : (exitNumber === 2 ? 'nd' : (exitNumber === 3 ? 'rd' : 'th'))} Exit`;
+            
+            return { text: directionText, exitNum: exitNumber };
+        }
+        
+        function calculateRotation(directionText, exitNum) {
+             const angles = {
+                'Straight Ahead': -90, 
+                'Turn Left': -180,    
+                'Turn Right': 0,       
+                'U-Turn': 90           
+            };
+            
+            if (mode === 'junction') {
+                return angles[directionText] || 0;
             } else {
-                directionText = `Take the ${exitNumber}${exitNumber === 2 ? 'nd' : (exitNumber === 3 ? 'rd' : 'th')} Exit`;
+                 // Roundabout logic
+                 const maxExits = parseInt(ui.exitsSelect.value);
+                 if (maxExits === 3) return ((exitNum - 2) * 120) - 90;
+                 if (maxExits === 4) return ({ 1: -120, 2: 0, 3: 120, 4: 180 }[exitNum] || 0) - 90;
+                 // Generic
+                 if (exitNum === 1) return -180;
+                 if (exitNum === 2) return -90;
+                 return 0;
+            }
+        }
+
+        function generateDirection() {
+            if (!hasStarted) {
+                dismissSplashScreen(); 
             }
             
-            let rotationAngle;
+            let newDirectionText;
+            let audioValue;
             
-            if (maxExits === 3) {
-                rotationAngle = (exitNumber - 2) * 120;
-            } else if (maxExits === 4) {
-                rotationAngle = { 1: -120, 2: 0, 3: 120, 4: 180 }[exitNumber] || 0;
+            if (mode === 'junction') {
+                newDirectionText = generateJunctionDirection();
+                audioValue = newDirectionText;
             } else {
-                if (exitNumber === 1) rotationAngle = -90;
-                else if (exitNumber === 2) rotationAngle = 0;
-                else if (exitNumber >= 3) rotationAngle = 90;
+                const result = generateRoundaboutDirection();
+                newDirectionText = result.text;
+                audioValue = result.exitNum;
             }
 
-            recentDirections.unshift(directionText);
+            recentDirections.unshift(newDirectionText);
             recentDirections.pop();
 
-            ui.directionText.textContent = directionText;
-            ui.directionArrow.style.transform = `rotate(${rotationAngle}deg)`;
+            ui.directionText.textContent = newDirectionText;
+            const rotation = calculateRotation(newDirectionText, audioValue);
+            ui.directionArrow.style.transform = `rotate(${rotation}deg)`;
             
-            playAudio('direction', exitNumber);
-            startTimer();
+            playAudio('direction', audioValue);
             
-            return directionText;
+            // Update Score & Moves
+            currentRunMoves++;
+            ui.movesDisplay.textContent = currentRunMoves;
+            ui.scoreDisplay.textContent = parseInt(ui.scoreDisplay.textContent) + 10;
+            
+            updateHistory(newDirectionText);
+            ui.requestDirection.textContent = '🎯 Request Next Direction';
         }
+        
+        function handleStuck() {
+            if (currentRunMoves === 0) {
+                 showStatusMessage("You haven't started a run yet!");
+                 return;
+            }
+            
+            // Save to DB
+            saveScore(currentRunMoves);
+            
+            // Show modal feedback
+            showStatusMessage(`Run Ended! You completed ${currentRunMoves} moves.`);
+            
+            // Reset run specific data
+            currentRunMoves = 0;
+            ui.movesDisplay.textContent = '0';
+            ui.directionText.textContent = "Run Ended. Ready for next?";
+            ui.directionArrow.style.transform = `rotate(-90deg)`;
+            playAudio('horn');
+        }
+
+        async function saveScore(score) {
+            if (!db || !userId) return;
+            try {
+                // IMPORTANT: Sorting happens in memory to avoid index issues.
+                await addDoc(collection(db, 'artifacts', appId, 'users', userId, 'scores'), {
+                    score: score,
+                    timestamp: serverTimestamp(),
+                    mode: mode
+                });
+                console.log("Score saved!");
+            } catch (e) {
+                console.error("Error saving score:", e);
+            }
+        }
+        
+        async function fetchLeaderboard() {
+            if (!db || !userId) {
+                ui.leaderboardList.innerHTML = '<li class="text-center text-red-400">Database not connected.</li>';
+                return;
+            }
+            
+            ui.leaderboardList.innerHTML = '<li class="text-center animate-pulse">Loading...</li>';
+            
+            try {
+                // Since we can't use complex queries without index, we fetch all and sort in memory
+                const q = query(collection(db, 'artifacts', appId, 'users', userId, 'scores'));
+                const querySnapshot = await getDocs(q);
+                
+                let scores = [];
+                querySnapshot.forEach((doc) => {
+                    // Filter out documents that don't have a score or mode field if necessary
+                    const data = doc.data();
+                    if (typeof data.score === 'number' && data.mode) {
+                        scores.push(data);
+                    }
+                });
+                
+                // Sort descending by score
+                scores.sort((a, b) => b.score - a.score);
+                // Take top 10
+                const topScores = scores.slice(0, 10);
+                
+                ui.leaderboardList.innerHTML = '';
+                if (topScores.length === 0) {
+                    ui.leaderboardList.innerHTML = '<li class="text-center italic opacity-70">No runs recorded yet. Get driving!</li>';
+                    return;
+                }
+                
+                topScores.forEach((s, index) => {
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-3 rounded-xl";
+                    li.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="font-black text-lg w-6 text-center ${index < 3 ? 'text-yellow-500' : 'text-gray-400'}">#${index + 1}</span>
+                            <span class="font-medium capitalize text-sm opacity-80">${s.mode || 'junction'}</span>
+                        </div>
+                        <span class="font-black text-xl" style="color: var(--theme-accent)">${s.score} Moves</span>
+                    `;
+                    ui.leaderboardList.appendChild(li);
+                });
+                
+            } catch (e) {
+                console.error("Error fetching leaderboard:", e);
+                ui.leaderboardList.innerHTML = '<li class="text-center text-red-400">Error loading scores.</li>';
+            }
+        }
+
+        // --- UI UPDATES (History) ---
 
         function updateHistory(newDirection) {
             const timestamp = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -909,30 +996,31 @@
         }
         
         function resetGame() {
-            clearTimer();
             history = [];
+            currentRunMoves = 0;
             recentDirections = [null, null];
+            // Only reset moves to 0, not score. Score tracking is per-run (moves).
+            ui.scoreDisplay.textContent = '0'; 
+            ui.movesDisplay.textContent = '0';
             ui.directionText.textContent = "Game Reset. Tap Request.";
-            ui.directionArrow.style.transform = `rotate(0deg)`;
+            ui.directionArrow.style.transform = `rotate(-90deg)`; 
             renderHistory();
         }
 
-        // --- HANDLERS (Unchanged) ---
+        // --- HANDLERS ---
+
+        function dismissSplashScreen() {
+            if (hasStarted) return;
+            ui.splashScreen.style.opacity = 0;
+            setTimeout(() => { ui.splashScreen.style.display = 'none'; }, 400); 
+            ui.appContainer.style.opacity = 1;
+            playAudio('engine'); 
+            hasStarted = true;
+            ui.directionText.textContent = 'Drive Safe!';
+        }
 
         function handleRequestDirection() {
-            if (!hasStarted) {
-                showStatusMessage("Please select a mode (At Junction / In Roundabout) to begin!");
-                return;
-            }
-            
-            let newDirection;
-            if (mode === 'junction') {
-                newDirection = generateJunctionDirection();
-            } else {
-                newDirection = generateRoundaboutDirection();
-            }
-
-            updateHistory(newDirection);
+            generateDirection();
         }
 
         function handleModeChange(newMode) {
@@ -949,12 +1037,10 @@
                 ui.roundaboutSettings.classList.remove('hidden');
                 ui.directionText.textContent = "Roundabout Mode Ready";
             }
-            
+            // Logic to keep run going or reset? Let's keep run going but change mode.
             if (!hasStarted) {
-                hasStarted = true;
-                ui.appContainer.style.opacity = '1';
+                dismissSplashScreen();
             }
-            resetGame();
         }
         
         function handleExitSelection(event) {
@@ -966,26 +1052,6 @@
             
             exits = parseInt(button.dataset.exits);
             ui.exitsSelect.value = exits; 
-            resetGame();
-        }
-        
-        function handleDifficultySelection(event) {
-            const button = event.target.closest('.difficulty-button');
-            if (!button) return;
-
-            ui.difficultyButtons.querySelectorAll('.difficulty-button').forEach(btn => btn.classList.remove('difficulty-button-active'));
-            button.classList.add('difficulty-button-active');
-            
-            difficulty = button.dataset.difficulty;
-            ui.difficultySelect.value = difficulty; 
-            
-            timerDuration = DIFFICULTY_MAP[difficulty];
-            
-            if (timerDuration === 0) {
-                clearTimer();
-            } else if (timerInterval) {
-                clearInterval(timerInterval);
-            }
         }
         
         function handleVoiceModeSelection(event) {
@@ -998,25 +1064,20 @@
             voiceMode = button.dataset.mode;
             ui.voiceModeSelect.value = voiceMode;
             localStorage.setItem('voiceMode', voiceMode);
-            // No need to call stopCurrentAudio here anymore since we use isolated audio elements
         }
 
         // --- APPEARANCE & SETTINGS ---
 
         function openSettingsModal() {
-            ui.settingsModalOverlay.classList.add('open');
-        }
-
-        function closeSettingsModal() {
-            ui.settingsModalOverlay.classList.remove('open');
+            // FIX: Changed renderThemeSelector to the correct function name: generateThemeButtons
+            generateThemeButtons(); 
+            openModal('settings-modal-overlay');
         }
 
         function toggleDarkMode(isDark) {
             isDarkMode = isDark;
             document.body.classList.toggle('dark-mode', isDark);
             localStorage.setItem('darkMode', isDark);
-            
-            // Re-render theme buttons to update their border/shadow color
             generateThemeButtons();
         }
 
@@ -1024,8 +1085,6 @@
             colorTheme = themeKey;
             document.body.setAttribute('data-theme', themeKey);
             localStorage.setItem('colorTheme', themeKey);
-            
-            // Update selection visuals (re-run generation to ensure correct accent border)
             generateThemeButtons();
         }
         
@@ -1038,7 +1097,6 @@
                 button.dataset.theme = key;
                 button.textContent = colors.name;
                 
-                // Set background color for preview by reading the CSS variable
                 const lightColor = getThemeAccentColor(key); 
                 button.style.backgroundColor = lightColor;
                 
@@ -1054,25 +1112,13 @@
         // --- INITIALIZATION ---
 
         function loadPreferences() {
-            // Load Dark Mode
             const savedDarkMode = localStorage.getItem('darkMode') === 'true';
             ui.darkModeToggle.checked = savedDarkMode;
             toggleDarkMode(savedDarkMode);
 
-            // Load Theme
             const savedTheme = localStorage.getItem('colorTheme') || 'default';
             changeTheme(savedTheme);
             
-            // Load Difficulty
-            const savedDifficulty = localStorage.getItem('difficulty') || 'medium';
-            difficulty = savedDifficulty;
-            timerDuration = DIFFICULTY_MAP[difficulty];
-            ui.difficultySelect.value = difficulty;
-            ui.difficultyButtons.querySelectorAll('.difficulty-button').forEach(btn => {
-                btn.classList.toggle('difficulty-button-active', btn.dataset.difficulty === difficulty);
-            });
-
-            // Load Voice Mode
             const savedVoiceMode = localStorage.getItem('voiceMode') || 'advanced';
             voiceMode = savedVoiceMode;
             ui.voiceModeSelect.value = voiceMode;
@@ -1080,9 +1126,7 @@
                 btn.classList.toggle('voice-mode-button-active', btn.dataset.mode === voiceMode);
             });
             
-            // Set initial mode to junction.
             handleModeChange('junction');
-            
             generateThemeButtons(); 
         }
 
@@ -1090,13 +1134,7 @@
             ui.splashScreen.addEventListener('click', () => {
                 initializeAudioContext();
                 isAudioAllowed = true;
-                
-                if (voiceMode !== 'off') {
-                    playAudio('engine');
-                }
-
-                ui.splashScreen.style.opacity = '0';
-                setTimeout(() => ui.splashScreen.style.display = 'none', 400);
+                dismissSplashScreen();
             });
 
             ui.requestDirection.addEventListener('click', handleRequestDirection);
@@ -1109,51 +1147,60 @@
             ui.settingsButton.addEventListener('click', openSettingsModal);
             ui.resetGameButton.addEventListener('click', () => {
                 resetGame();
-                closeSettingsModal();
+                closeModal('settings-modal-overlay');
             });
+            
+            // STUCK BUTTON
+            ui.stuckButton.addEventListener('click', handleStuck);
+            
+            // LEADERBOARD BUTTON
+            ui.leaderboardButton.addEventListener('click', () => {
+                fetchLeaderboard();
+                openModal('leaderboard-modal-overlay');
+            });
+            
+            // MODAL CLOSE BUTTONS
+            // Use event delegation for simpler close handling on overlay click
+            ui.settingsModalOverlay.addEventListener('click', (e) => {
+                if (e.target.id === 'settings-modal-overlay') {
+                    closeModal('settings-modal-overlay');
+                }
+            });
+            ui.leaderboardModalOverlay.addEventListener('click', (e) => {
+                if (e.target.id === 'leaderboard-modal-overlay') {
+                    closeModal('leaderboard-modal-overlay');
+                }
+            });
+            
+            ui.closeSettingsX.addEventListener('click', () => closeModal('settings-modal-overlay'));
+            ui.closeLeaderboardX.addEventListener('click', () => closeModal('leaderboard-modal-overlay'));
+            
+            // Status OK Button
+            ui.statusOkButton.addEventListener('click', closeStatusMessage);
 
             ui.darkModeToggle.addEventListener('change', (e) => toggleDarkMode(e.target.checked));
-            
-            ui.difficultyButtons.addEventListener('click', handleDifficultySelection);
             ui.voiceModeButtons.addEventListener('click', handleVoiceModeSelection);
         }
 
         async function initFirebase() {
             if (!firebaseConfig) {
-                console.error("Firebase config not found. Running without persistence.");
+                console.error("Firebase config not found.");
                 return;
             }
-
             try {
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                getFirestore(app);
-
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                
-                userId = auth.currentUser?.uid;
-                console.log("Firebase initialized. User ID:", userId || 'Anonymous');
-
+                // Firebase is already initialized globally at the start of the module
+                // This function ensures userId is set (which happens in initializeAuth)
+                // We'll keep it as a placeholder to ensure auth is handled.
             } catch (error) {
-                console.error("Firebase authentication failed:", error);
+                console.error("Firebase error during init check:", error);
             }
         }
         
         window.onload = function() {
-            if (!(window.AudioContext || window.webkitAudioContext)) {
-                showStatusMessage("Your browser does not fully support Web Audio. Sound features may be limited or unavailable.");
-            }
-            
             loadPreferences();
             setupEventListeners();
             initFirebase(); 
         };
-        
-        window.closeSettingsModal = closeSettingsModal;
 
     </script>
 </body>
