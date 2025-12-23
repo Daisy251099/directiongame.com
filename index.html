@@ -80,7 +80,7 @@
         #request-direction { 
             background-color: var(--theme-accent);
             color: white;
-            box-shadow: 0 10px 15px -3px var(--theme-accent);
+            box-shadow: none; 
         }
         
         #stuck-button {
@@ -383,14 +383,6 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // --- FIREBASE GLOBALS ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
         // --- GAME STATE ---
         let mode = 'junction'; 
@@ -400,7 +392,6 @@
         let hasStarted = false; 
         let colorTheme = 'default'; 
         let isDarkMode = false; 
-        let userId = null; 
         let isAudioAllowed = false; 
         let currentRunMoves = 0; 
 
@@ -473,31 +464,6 @@
             saveScoreBtn: document.getElementById('save-score-btn'),
             cancelSaveBtn: document.getElementById('cancel-save-btn')
         };
-
-        // --- FIREBASE & AUTH INITIALIZATION ---
-        let db, auth;
-
-        if (firebaseConfig) {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            async function initializeAuth() {
-                try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                    userId = auth.currentUser?.uid;
-                    console.log("Firebase initialized. User ID:", userId);
-                } catch (error) {
-                    console.error("Firebase Auth Error:", error);
-                    showStatusMessage(`Error signing in: ${error.message}`);
-                }
-            }
-            initializeAuth();
-        } 
         
         // --- UTILITY FUNCTIONS ---
         
@@ -642,12 +608,13 @@
             if (mode === 'junction') {
                 return angles[directionText] || 0;
             } else {
-                 const maxExits = parseInt(ui.exitsSelect.value);
-                 if (maxExits === 3) return ((exitNum - 2) * 120) - 90;
-                 if (maxExits === 4) return ({ 1: -120, 2: 0, 3: 120, 4: 180 }[exitNum] || 0) - 90;
-                 if (exitNum === 1) return -180;
-                 if (exitNum === 2) return -90;
-                 return 0;
+                 // GENERAL DIRECTION LOGIC FOR ROUNDABOUTS
+                 // Exits roughly correspond to 90 degree increments
+                 // 1st exit = Left (-180)
+                 // 2nd exit = Straight (-90)
+                 // 3rd exit = Right (0)
+                 // 4th exit = U-Turn (90)
+                 return -180 + ((exitNum - 1) * 90);
             }
         }
 
@@ -706,20 +673,27 @@
         }
 
         async function saveScore(score, name) {
-            if (!db || !userId) return;
             const pilotName = name.trim() || "Anonymous Pilot";
-            
+            const scoreData = {
+                score: score,
+                name: pilotName,
+                timestamp: Date.now(),
+                mode: mode
+            };
+
+            // Local Storage ONLY
             try {
-                await addDoc(collection(db, 'artifacts', appId, 'users', userId, 'scores'), {
-                    score: score,
-                    name: pilotName,
-                    timestamp: serverTimestamp(),
-                    mode: mode
-                });
-                console.log("Score saved!");
-                showStatusMessage("Score Saved to Leaderboard!");
+                const localScores = JSON.parse(localStorage.getItem('gps_leaderboard') || '[]');
+                localScores.push(scoreData);
+                // Keep top 20 locally to be safe
+                localScores.sort((a, b) => b.score - a.score);
+                const trimmedScores = localScores.slice(0, 20);
+                
+                localStorage.setItem('gps_leaderboard', JSON.stringify(trimmedScores));
+                console.log("Score saved locally!");
+                showStatusMessage("Score Saved!");
             } catch (e) {
-                console.error("Error saving score:", e);
+                console.error("Local save failed:", e);
                 showStatusMessage("Could not save score.");
             }
         }
@@ -727,60 +701,50 @@
         function completeGameReset() {
             currentRunMoves = 0;
             ui.movesDisplay.textContent = '0';
+            ui.scoreDisplay.textContent = '0'; // FIX: Reset score as well
             ui.directionText.textContent = "Run Ended. Ready for next?";
             ui.directionArrow.style.transform = `rotate(-90deg)`;
             closeModal('game-over-modal');
         }
         
         async function fetchLeaderboard() {
-            if (!db || !userId) {
-                ui.leaderboardList.innerHTML = '<li class="text-center text-red-400">Database not connected.</li>';
+            ui.leaderboardList.innerHTML = '<li class="text-center animate-pulse">Loading...</li>';
+            
+            let scores = [];
+            
+            // Local Storage ONLY
+            try {
+                const localScores = JSON.parse(localStorage.getItem('gps_leaderboard') || '[]');
+                scores = localScores;
+            } catch (e) {
+                console.error("Local fetch failed:", e);
+            }
+            
+            // Render
+            scores.sort((a, b) => b.score - a.score);
+            const topScores = scores.slice(0, 10);
+            
+            ui.leaderboardList.innerHTML = '';
+            if (topScores.length === 0) {
+                ui.leaderboardList.innerHTML = '<li class="text-center italic opacity-70">No runs recorded yet. Get driving!</li>';
                 return;
             }
             
-            ui.leaderboardList.innerHTML = '<li class="text-center animate-pulse">Loading...</li>';
-            
-            try {
-                const q = query(collection(db, 'artifacts', appId, 'users', userId, 'scores'));
-                const querySnapshot = await getDocs(q);
-                
-                let scores = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if (typeof data.score === 'number' && data.mode) {
-                        scores.push(data);
-                    }
-                });
-                
-                scores.sort((a, b) => b.score - a.score);
-                const topScores = scores.slice(0, 10);
-                
-                ui.leaderboardList.innerHTML = '';
-                if (topScores.length === 0) {
-                    ui.leaderboardList.innerHTML = '<li class="text-center italic opacity-70">No runs recorded yet. Get driving!</li>';
-                    return;
-                }
-                
-                topScores.forEach((s, index) => {
-                    const li = document.createElement('li');
-                    li.className = "flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-3 rounded-xl";
-                    li.innerHTML = `
-                        <div class="flex flex-col">
-                            <div class="flex items-center gap-2">
-                                <span class="font-black text-sm w-5 text-center ${index < 3 ? 'text-yellow-500' : 'text-gray-400'}">#${index + 1}</span>
-                                <span class="font-bold text-gray-800 dark:text-white truncate max-w-[120px]">${s.name || 'Anonymous'}</span>
-                            </div>
-                            <span class="text-xs text-gray-400 ml-7 capitalize">${s.mode}</span>
+            topScores.forEach((s, index) => {
+                const li = document.createElement('li');
+                li.className = "flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-3 rounded-xl";
+                li.innerHTML = `
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-sm w-5 text-center ${index < 3 ? 'text-yellow-500' : 'text-gray-400'}">#${index + 1}</span>
+                            <span class="font-bold text-gray-800 dark:text-white truncate max-w-[120px]">${s.name || 'Anonymous'}</span>
                         </div>
-                        <span class="font-black text-xl" style="color: var(--theme-accent)">${s.score}</span>
-                    `;
-                    ui.leaderboardList.appendChild(li);
-                });
-                
-            } catch (e) {
-                console.error("Error fetching leaderboard:", e);
-                ui.leaderboardList.innerHTML = '<li class="text-center text-red-400">Error loading scores.</li>';
-            }
+                        <span class="text-xs text-gray-400 ml-7 capitalize">${s.mode}</span>
+                    </div>
+                    <span class="font-black text-xl" style="color: var(--theme-accent)">${s.score}</span>
+                `;
+                ui.leaderboardList.appendChild(li);
+            });
         }
 
         // --- UI UPDATES (History) ---
